@@ -1,53 +1,52 @@
+version: '3.8'
+
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:15-alpine
     container_name: portal-db
-    restart: unless-stopped
-    env_file:
-      - .env
+    restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "${DB_PORT}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - portal-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - portal-net
 
   app:
-    build:
-      context: ./app
-      dockerfile: Dockerfile
+    build: ./app
     container_name: portal-app
-    restart: unless-stopped
-    env_file:
-      - .env
+    restart: always
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
-      JWT_SECRET: ${JWT_SECRET}
-      PORT: 3000
-    ports:
-      - "${APP_PORT}:3000"
+      - PORT=3000
+      - DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@portal-db:${DB_PORT}/${POSTGRES_DB}
+      - JWT_SECRET=${JWT_SECRET}
     volumes:
-      - ./uploads:/app/public/uploads
-    depends_on:
-      db:
-        condition: service_healthy
+      - ./app/public/uploads:/app/public/uploads
     networks:
-      - portal-network
+      - portal-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: portal-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./app/public/uploads:/app/public/uploads
+    depends_on:
+      - app
+    networks:
+      - portal-net
 
 volumes:
   pgdata:
-    driver: local
 
 networks:
-  portal-network:
+  portal-net:
     driver: bridge
