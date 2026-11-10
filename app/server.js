@@ -79,7 +79,6 @@ app.post('/api/users', authenticateToken, requireAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// Bật / Tắt (Khóa/Mở khóa) Tài khoản
 app.patch('/api/users/:id/toggle', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
@@ -89,6 +88,40 @@ app.patch('/api/users/:id/toggle', authenticateToken, requireAdmin, async (req, 
     res.json(result.rows[0]);
   } catch (err) { 
     res.status(500).json({ error: err.message }); 
+  }
+});
+
+
+// ------------------------------------------
+// 1.5 ĐỔI MẬT KHẨU (CHANGE PASSWORD)
+// ------------------------------------------
+app.patch('/api/users/change-password', authenticateToken, async (req, res) => {
+  try {
+    const { old_password, new_password } = req.body;
+    const userId = req.user.id;
+
+    // Kiểm tra mật khẩu cũ
+    const checkResult = await pool.query(
+      `SELECT id FROM users WHERE id = $1 AND password_hash = crypt($2, password_hash)`,
+      [userId, old_password]
+    );
+
+    if (checkResult.rows.length === 0) {
+      return res.status(401).json({ error: 'Mật khẩu cũ không chính xác!' });
+    }
+
+    // Cập nhật mật khẩu mới
+    await pool.query(
+      `UPDATE users SET password_hash = crypt($1, gen_salt('bf')) WHERE id = $2`,
+      [new_password, userId]
+    );
+    
+    // Ghi log
+    await pool.query('INSERT INTO audit_logs (user_id, action, details) VALUES ($1, $2, $3)', [userId, 'UPDATE_PROFILE', 'Đổi mật khẩu tài khoản']);
+
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
