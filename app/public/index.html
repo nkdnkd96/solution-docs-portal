@@ -13,18 +13,28 @@
   </script>
   <style>
     .rich-preview table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; color: #e2e8f0; }
-    .rich-preview th, .rich-preview td { border: 1px solid #475569; padding: 8px 10px; text-align: left; }
+    .rich-preview th, .rich-preview td { border: 1px solid #475569; padding: 8px 10px; text-align: left; vertical-align: top; min-width: 40px; }
     .rich-preview th { background-color: #334155; font-weight: 700; color: #f8fafc; }
     .rich-preview ul { list-style-type: disc; padding-left: 24px; margin: 8px 0; }
-    .rich-preview h3 { font-size: 16px; font-weight: 700; color: #f8fafc; margin-top: 8px; margin-bottom: 6px; }
-    .editor-surface { min-height: 240px; max-height: 420px; overflow-y: auto; }
+    .rich-preview ol { list-style-type: decimal; padding-left: 24px; margin: 8px 0; }
+    .rich-preview h2 { font-size: 18px; font-weight: 700; color: #f8fafc; margin-top: 12px; margin-bottom: 6px; }
+    .rich-preview h3 { font-size: 16px; font-weight: 700; color: #f8fafc; margin-top: 10px; margin-bottom: 6px; }
+    .rich-preview h4 { font-size: 15px; font-weight: 600; color: #cbd5e1; margin-top: 8px; margin-bottom: 4px; }
+    .rich-preview img { max-width: 100%; height: auto; border-radius: 4px; cursor: pointer; transition: outline 0.15s ease; }
+    .rich-preview img.selected-editor-img { outline: 3px solid #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+    .rich-preview td.selected-editor-cell, .rich-preview th.selected-editor-cell { outline: 2px solid #3b82f6; background-color: rgba(59, 130, 246, 0.1); }
+
+    .editor-surface { min-height: 550px; max-height: 78vh; overflow-y: auto; resize: vertical; }
+    .editor-fullscreen { position: fixed !important; inset: 0 !important; z-index: 50 !important; max-width: 100% !important; margin: 0 !important; border-radius: 0 !important; display: flex; flex-direction: column; background-color: #0f172a; padding: 1rem !important; }
+    .editor-fullscreen .editor-surface { flex: 1; max-height: none !important; min-height: 0 !important; }
+
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #1e293b; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #64748b; }
   
     .content-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; opacity: 0; }
-    .content-body.expanded { max-height: 2000px; opacity: 1; padding-top: 1rem; border-top: 1px solid #374151; margin-top: 0.75rem; }
+    .content-body.expanded { max-height: 3000px; opacity: 1; padding-top: 1rem; border-top: 1px solid #374151; margin-top: 0.75rem; }
     .toggle-icon { transition: transform 0.3s ease; }
     .expanded .toggle-icon { transform: rotate(180deg); }
   </style>
@@ -110,35 +120,187 @@
       </section>
     </main>
 
-    <!-- TAB 2: SOẠN THẢO -->
-    <main id="tab-editor" class="hidden flex-1 max-w-5xl w-full mx-auto px-4 py-6">
-      <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-xl space-y-5">
-        <div class="flex items-center justify-between border-b border-gray-800 pb-4"><h2 id="editor-form-title" class="text-lg font-bold text-white">Thêm mới Khối nội dung</h2><button onclick="resetEditorForm()" class="text-xs text-blue-400 hover:text-blue-300">Làm mới Form</button></div>
-        <input type="hidden" id="edit-block-id" value="" />
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-400 mb-1">Tiêu đề (Title) *</label><input type="text" id="edit-title" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm outline-none" /></div>
-          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Phân loại *</label><select id="edit-block-type" onchange="onEditorTypeChange()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"><option value="GENERAL_TECH">Thuyết minh chung</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
-          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Loại giải pháp *</label><select id="edit-solution" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"></select></div>
-          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Hãng sản xuất</label><select id="edit-vendor" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"></select></div>
-          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Gắn với Model thiết bị (Chọn nhiều)</label><div id="edit-models-container" class="bg-gray-800 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto space-y-1.5 text-sm"></div></div>
-          <div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-400 mb-1">Mục đích sử dụng tài liệu (Chọn nhiều) *</label><div id="edit-purposes-container" class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-gray-800 border border-gray-700 rounded-lg p-4 text-sm"></div></div>
+    <!-- TAB 2: TRÌNH SOẠN THẢO NÂNG CAO (FULL-WIDTH) -->
+    <main id="tab-editor" class="hidden flex-1 max-w-[1440px] w-full mx-auto px-4 py-6">
+      <div id="editor-wrapper" class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between border-b border-gray-800 pb-3 gap-2">
+          <div class="flex items-center gap-3">
+            <h2 id="editor-form-title" class="text-lg font-bold text-white">Thêm mới Khối nội dung</h2>
+            <button type="button" onclick="toggleMetadataPanel()" id="btn-toggle-meta" class="text-xs bg-gray-800 hover:bg-gray-700 text-slate-300 border border-gray-700 px-2.5 py-1 rounded transition">Thu gọn thông tin chung ▲</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="toggleFullscreenEditor()" id="btn-fullscreen" class="text-xs bg-indigo-900/40 hover:bg-indigo-900/70 text-indigo-300 border border-indigo-700/60 px-3 py-1.5 rounded-lg font-semibold transition">⛶ Toàn màn hình</button>
+            <button type="button" onclick="resetEditorForm()" class="text-xs bg-gray-800 hover:bg-gray-700 text-blue-400 border border-gray-700 px-3 py-1.5 rounded-lg transition">Làm mới Form</button>
+          </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Nội dung HTML (Hỗ trợ chèn bảng) *</label>
-          <div class="border border-gray-700 rounded-t-lg bg-gray-800 p-2 flex flex-wrap gap-1.5 items-center">
-            <button type="button" onclick="execCmd('bold')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs font-bold">B</button>
-            <button type="button" onclick="execCmd('italic')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs italic">I</button>
-            <button type="button" onclick="execCmd('underline')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs underline">U</button>
-            <button type="button" onclick="execCmd('formatBlock', 'H3')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs font-semibold">H3</button>
-            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1 bg-blue-900/40 text-blue-400 border border-blue-800 rounded text-xs">+ Bảng mẫu</button>
-            <label class="px-3 py-1 bg-emerald-900/40 text-emerald-400 border border-emerald-800 rounded text-xs cursor-pointer">+ Ảnh sơ đồ<input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" /></label>
+        <input type="hidden" id="edit-block-id" value="" />
+
+        <!-- Vùng Metadata (Có thể thu gọn để nhường chỗ cho khung soạn thảo) -->
+        <div id="editor-metadata-panel" class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-gray-950/60 p-4 rounded-xl border border-gray-800/80">
+          <div class="md:col-span-6">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Tiêu đề (Title) *</label>
+            <input type="text" id="edit-title" placeholder="Nhập tiêu đề thuyết minh..." class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3.5 py-2 text-sm outline-none focus:border-blue-500" />
           </div>
-          <div id="rich-editor" contenteditable="true" class="editor-surface rich-preview border border-t-0 border-gray-700 rounded-b-lg p-5 bg-gray-900 focus:outline-none"><h3>1. Tiêu đề</h3><p>Nhập nội dung...</p></div>
+          <div class="md:col-span-3">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Phân loại *</label>
+            <select id="edit-block-type" onchange="onEditorTypeChange()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm">
+              <option value="GENERAL_TECH">Thuyết minh chung</option>
+              <option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option>
+            </select>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Loại giải pháp *</label>
+            <select id="edit-solution" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Hãng sản xuất</label>
+            <select id="edit-vendor" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select>
+          </div>
+          <div class="md:col-span-4">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Gắn với Model thiết bị (Chọn nhiều)</label>
+            <div id="edit-models-container" class="bg-gray-800 border border-gray-700 rounded-lg p-2.5 max-h-24 overflow-y-auto space-y-1 text-xs"></div>
+          </div>
+          <div class="md:col-span-5">
+            <label class="block text-xs font-semibold text-slate-400 mb-1">Mục đích sử dụng tài liệu (Chọn nhiều) *</label>
+            <div id="edit-purposes-container" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-gray-800 border border-gray-700 rounded-lg p-2.5 max-h-24 overflow-y-auto text-xs"></div>
+          </div>
         </div>
-        <div class="flex justify-end gap-3 pt-4 border-t border-gray-800">
+
+        <!-- KHU VỰC SOẠN THẢO CHÍNH -->
+        <div class="flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-semibold text-slate-400">Nội dung thuyết minh (Hỗ trợ dán ảnh trực tiếp bằng <code class="text-blue-400">Ctrl+V</code> hoặc kéo thả ảnh vào khung) *</label>
+            <button type="button" onclick="toggleSourceCode()" id="btn-source-code" class="text-xs px-2.5 py-1 rounded bg-gray-800 border border-gray-700 text-amber-400 hover:bg-gray-700 font-mono transition">&lt;/&gt; Xem mã HTML</button>
+          </div>
+
+          <!-- THANH CÔNG CỤ CHÍNH (MAIN TOOLBAR) -->
+          <div class="border border-gray-700 rounded-t-xl bg-gray-800 p-2 flex flex-wrap gap-1.5 items-center sticky top-0 z-20 shadow-md">
+            <!-- Undo / Redo -->
+            <button type="button" onclick="execCmd('undo')" title="Hoàn tác (Ctrl+Z)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↶</button>
+            <button type="button" onclick="execCmd('redo')" title="Làm lại (Ctrl+Y)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↷</button>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Kiểu đoạn văn / Tiêu đề -->
+            <select onchange="if(this.value) { execCmd('formatBlock', this.value); this.value=''; }" class="bg-gray-700 text-white text-xs rounded px-2 py-1.5 border border-gray-600 outline-none">
+              <option value="">Kiểu chữ...</option>
+              <option value="H2">Tiêu đề lớn (H2)</option>
+              <option value="H3">Tiêu đề mục (H3)</option>
+              <option value="H4">Tiêu đề phụ (H4)</option>
+              <option value="P">Đoạn văn thường (P)</option>
+            </select>
+
+            <!-- Cỡ chữ -->
+            <select onchange="if(this.value) { execCmd('fontSize', this.value); this.value=''; }" class="bg-gray-700 text-white text-xs rounded px-2 py-1.5 border border-gray-600 outline-none">
+              <option value="">Cỡ chữ...</option>
+              <option value="2">Nhỏ (10pt)</option>
+              <option value="3">Thường (13pt)</option>
+              <option value="4">Vừa (14pt)</option>
+              <option value="5">Lớn (18pt)</option>
+              <option value="6">Rất lớn (24pt)</option>
+            </select>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Định dạng cơ bản -->
+            <button type="button" onclick="execCmd('bold')" title="In đậm (Ctrl+B)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-bold">B</button>
+            <button type="button" onclick="execCmd('italic')" title="In nghiêng (Ctrl+I)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs italic">I</button>
+            <button type="button" onclick="execCmd('underline')" title="Gạch chân (Ctrl+U)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs underline">U</button>
+            <button type="button" onclick="execCmd('strikeThrough')" title="Gạch ngang chữ" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs line-through">S</button>
+            <button type="button" onclick="execCmd('removeFormat')" title="Xóa định dạng rác" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-rose-300 rounded text-xs">Tx</button>
+
+            <!-- Màu chữ & Tô sáng -->
+            <label title="Màu chữ" class="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs cursor-pointer text-white">
+              <span>A</span>
+              <input type="color" value="#60a5fa" onchange="execCmd('foreColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
+            </label>
+            <label title="Màu nền chữ (Highlight)" class="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs cursor-pointer text-amber-300">
+              <span>🖍</span>
+              <input type="color" value="#fde047" onchange="execCmd('hiliteColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
+            </label>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Căn lề & Danh sách -->
+            <button type="button" onclick="execCmd('justifyLeft')" title="Căn trái" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫷</button>
+            <button type="button" onclick="execCmd('justifyCenter')" title="Căn giữa" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫸</button>
+            <button type="button" onclick="execCmd('justifyRight')" title="Căn phải" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫹</button>
+            <button type="button" onclick="execCmd('justifyFull')" title="Căn đều 2 bên" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">☰</button>
+
+            <button type="button" onclick="execCmd('insertUnorderedList')" title="Danh sách dấu chấm" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">• Danh sách</button>
+            <button type="button" onclick="execCmd('insertOrderedList')" title="Danh sách đánh số" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">1. Danh sách</button>
+            <button type="button" onclick="execCmd('indent')" title="Thụt lề vào" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">→|</button>
+            <button type="button" onclick="execCmd('outdent')" title="Thụt lề ra" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">|←</button>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Chèn Bảng & Ảnh -->
+            <button type="button" onclick="openTableModal()" class="px-3 py-1.5 bg-purple-900/50 text-purple-300 hover:bg-purple-800/70 border border-purple-700 rounded text-xs font-semibold transition">+ Chèn Bảng</button>
+            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1.5 bg-blue-900/50 text-blue-300 hover:bg-blue-800/70 border border-blue-700 rounded text-xs font-semibold transition">+ Bảng Thông số Mẫu</button>
+            <label class="px-3 py-1.5 bg-emerald-900/50 text-emerald-300 hover:bg-emerald-800/70 border border-emerald-700 rounded text-xs font-semibold cursor-pointer transition">
+              + Chèn Ảnh
+              <input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" />
+            </label>
+          </div>
+
+          <!-- THANH CÔNG CỤ NGỮ CẢNH: XỬ LÝ BẢNG (Tự động hiện khi đặt chuột vào Bảng) -->
+          <div id="table-context-toolbar" class="hidden bg-purple-950/90 border-x border-b border-purple-700/80 px-3 py-2 flex flex-wrap items-center gap-1.5 text-xs">
+            <span class="font-bold text-purple-300 mr-2 flex items-center gap-1">⊞ Công cụ Bảng:</span>
+            <button type="button" onclick="tableAction('addRowAbove')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Dòng trên</button>
+            <button type="button" onclick="tableAction('addRowBelow')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Dòng dưới</button>
+            <button type="button" onclick="tableAction('deleteRow')" class="px-2.5 py-1 bg-rose-900/80 hover:bg-rose-800 text-rose-200 rounded border border-rose-700">- Xóa dòng</button>
+            <span class="w-px h-4 bg-purple-700 mx-1"></span>
+            <button type="button" onclick="tableAction('addColLeft')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Cột trái</button>
+            <button type="button" onclick="tableAction('addColRight')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Cột phải</button>
+            <button type="button" onclick="tableAction('deleteCol')" class="px-2.5 py-1 bg-rose-900/80 hover:bg-rose-800 text-rose-200 rounded border border-rose-700">- Xóa cột</button>
+            <span class="w-px h-4 bg-purple-700 mx-1"></span>
+            <button type="button" onclick="tableAction('mergeRight')" class="px-2.5 py-1 bg-indigo-900 hover:bg-indigo-800 text-indigo-200 rounded border border-indigo-700">Gộp ô phải →</button>
+            <button type="button" onclick="tableAction('splitCell')" class="px-2.5 py-1 bg-indigo-900 hover:bg-indigo-800 text-indigo-200 rounded border border-indigo-700">Tách ô</button>
+            <select onchange="if(this.value !== '') { tableAction('cellBg', this.value); this.value=''; }" class="bg-purple-900 text-white rounded px-2 py-1 border border-purple-700 outline-none">
+              <option value="">Màu nền ô...</option>
+              <option value="#334155">Xám đậm (Header)</option>
+              <option value="#1e3a8a">Xanh dương đậm</option>
+              <option value="#064e3b">Xanh lá đậm</option>
+              <option value="#78350f">Vàng nâu</option>
+              <option value="transparent">Xóa màu nền</option>
+            </select>
+            <button type="button" onclick="tableAction('deleteTable')" class="ml-auto px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-semibold rounded shadow">🗑 Xóa cả bảng</button>
+          </div>
+
+          <!-- THANH CÔNG CỤ NGỮ CẢNH: XỬ LÝ ẢNH (Tự động hiện khi nhấp vào Ảnh) -->
+          <div id="image-context-toolbar" class="hidden bg-emerald-950/90 border-x border-b border-emerald-700/80 px-3 py-2 flex flex-wrap items-center gap-2 text-xs">
+            <span class="font-bold text-emerald-300 mr-1">🖼 Công cụ Ảnh:</span>
+            <span class="text-slate-400">Kích thước:</span>
+            <button type="button" onclick="imageAction('resize', '25%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">25%</button>
+            <button type="button" onclick="imageAction('resize', '50%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">50%</button>
+            <button type="button" onclick="imageAction('resize', '75%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">75%</button>
+            <button type="button" onclick="imageAction('resize', '100%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">100%</button>
+            <button type="button" onclick="imageAction('customSize')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-emerald-200 rounded border border-emerald-700">Nhập px...</button>
+            <span class="w-px h-4 bg-emerald-700 mx-1"></span>
+            <span class="text-slate-400">Căn lề:</span>
+            <button type="button" onclick="imageAction('align', 'left')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">Trái</button>
+            <button type="button" onclick="imageAction('align', 'center')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">Giữa</button>
+            <button type="button" onclick="imageAction('align', 'right')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">Phải</button>
+            <span class="w-px h-4 bg-emerald-700 mx-1"></span>
+            <button type="button" onclick="imageAction('caption')" class="px-2.5 py-1 bg-blue-900 hover:bg-blue-800 text-blue-200 rounded border border-blue-700">+ Chú thích ảnh</button>
+            <button type="button" onclick="imageAction('delete')" class="ml-auto px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-semibold rounded shadow">🗑 Xóa ảnh</button>
+          </div>
+
+          <!-- Bề mặt soạn thảo WYSIWYG -->
+          <div id="rich-editor" contenteditable="true"
+            class="editor-surface rich-preview border border-t-0 border-gray-700 rounded-b-xl p-6 bg-gray-950 focus:outline-none focus:border-blue-500 text-slate-100 text-[15px] leading-relaxed">
+            <h3>1. Tiêu đề mục thuyết minh</h3>
+            <p>Nhập nội dung thuyết minh, dán trực tiếp ảnh chụp màn hình (Ctrl+V) hoặc chèn bảng thông số kỹ thuật tại đây...</p>
+          </div>
+
+          <!-- Khung sửa mã nguồn HTML (Ẩn mặc định) -->
+          <textarea id="html-source-editor" class="hidden editor-surface w-full border border-t-0 border-gray-700 rounded-b-xl p-5 bg-gray-950 text-emerald-400 font-mono text-xs focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3 border-t border-gray-800">
           <button type="button" onclick="switchTab('search')" class="px-5 py-2.5 rounded-lg border border-gray-700 text-slate-300 text-sm hover:bg-gray-800">Hủy</button>
-          <button type="button" onclick="saveContentBlock()" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow">Lưu Dữ Liệu</button>
+          <button type="button" onclick="saveContentBlock()" class="px-6 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold shadow-lg">Lưu Dữ Liệu</button>
         </div>
       </div>
     </main>
@@ -175,15 +337,15 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="bg-gray-800 p-5 rounded-lg border border-gray-700 flex flex-col justify-between">
             <div>
-                <h4 class="text-white font-semibold mb-2">Tải xuống Bản sao lưu (Backup)</h4>
-                <p class="text-xs text-slate-400 mb-4">Trích xuất toàn bộ dữ liệu hiện tại (Danh mục, Thuyết minh, Tài khoản, Nhật ký) thành một file mã nguồn <strong>.sql</strong>.</p>
+              <h4 class="text-white font-semibold mb-2">Tải xuống Bản sao lưu (Backup)</h4>
+              <p class="text-xs text-slate-400 mb-4">Trích xuất toàn bộ dữ liệu hiện tại (Danh mục, Thuyết minh, Tài khoản, Nhật ký) thành một file mã nguồn <strong>.sql</strong>.</p>
             </div>
             <button onclick="downloadBackup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition shadow">Tải file Backup (.sql)</button>
           </div>
           <div class="bg-gray-800 p-5 rounded-lg border border-gray-700 border-l-4 border-l-rose-600 flex flex-col justify-between">
             <div>
-                <h4 class="text-rose-400 font-semibold mb-2">Phục hồi Dữ liệu (Restore)</h4>
-                <p class="text-xs text-slate-400 mb-4">Tải lên file <strong>.sql</strong> để nạp lại hệ thống. <br/><strong class="text-rose-500">CẢNH BÁO NGUY HIỂM:</strong> Toàn bộ dữ liệu hiện tại sẽ bị ghi đè!</p>
+              <h4 class="text-rose-400 font-semibold mb-2">Phục hồi Dữ liệu (Restore)</h4>
+              <p class="text-xs text-slate-400 mb-4">Tải lên file <strong>.sql</strong> để nạp lại hệ thống. <br/><strong class="text-rose-500">CẢNH BÁO NGUY HIỂM:</strong> Toàn bộ dữ liệu hiện tại sẽ bị ghi đè!</p>
             </div>
             <div class="flex gap-2 items-center w-full">
               <label class="bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition cursor-pointer shrink-0">
@@ -205,6 +367,31 @@
         <div class="overflow-x-auto"><table class="w-full text-left text-sm text-slate-300"><thead class="text-xs uppercase bg-gray-800 text-slate-400"><tr><th class="px-4 py-3">Thời gian</th><th class="px-4 py-3">Người dùng</th><th class="px-4 py-3">Hành động</th><th class="px-4 py-3">Chi tiết</th></tr></thead><tbody id="logs-tbody" class="divide-y divide-gray-800"></tbody></table></div>
       </div>
     </main>
+  </div>
+
+  <!-- Modal Tạo Bảng Tùy Chỉnh -->
+  <div id="table-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 max-w-sm w-full p-6">
+      <h3 class="text-base font-bold text-white mb-4">Chèn Bảng Mới</h3>
+      <div class="grid grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Số dòng (Rows)</label>
+          <input type="number" id="tbl-rows" value="4" min="1" max="50" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-xs text-slate-400 mb-1">Số cột (Cols)</label>
+          <input type="number" id="tbl-cols" value="3" min="1" max="15" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" />
+        </div>
+      </div>
+      <label class="flex items-center gap-2 text-xs text-slate-300 mb-5">
+        <input type="checkbox" id="tbl-has-header" checked class="rounded bg-gray-900 border-gray-700" />
+        <span>Có dòng tiêu đề (Header)</span>
+      </label>
+      <div class="flex justify-end gap-2">
+        <button type="button" onclick="document.getElementById('table-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg border border-gray-700 text-slate-300 text-xs hover:bg-gray-700">Hủy</button>
+        <button type="button" onclick="confirmInsertCustomTable()" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold">Chèn vào bài</button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal Đổi Mật Khẩu -->
@@ -230,6 +417,11 @@
     let currentUser = JSON.parse(localStorage.getItem('portal_user') || 'null');
     let masterData = { purposes: [], solutions: [], vendors: [], models: [] };
     let currentBlocks = [];
+
+    // Trạng thái của Trình soạn thảo nâng cao
+    let activeTableCell = null;
+    let activeImage = null;
+    let isSourceMode = false;
 
     function showToast(msg) { document.getElementById('toast-msg').textContent = msg; const t = document.getElementById('toast'); t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 3500); }
 
@@ -261,6 +453,7 @@
       document.getElementById('user-role-badge').textContent = currentUser.role === 'ADMIN' ? 'ADMIN' : 'VIEWER';
       document.getElementById('user-role-badge').className = currentUser.role === 'ADMIN' ? 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-amber-500/20 text-amber-400' : 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-emerald-500/20 text-emerald-400';
       document.querySelectorAll('.admin-only').forEach(el => currentUser.role === 'ADMIN' ? el.classList.remove('hidden') : el.classList.add('hidden'));
+      initRichEditorInteractions();
       await loadMasterData(); switchTab('search');
     }
 
@@ -287,7 +480,7 @@
       try {
         currentBlocks = await apiFetch('/api/content-blocks?' + params.toString());
         let logDetails = []; if(pType) logDetails.push(`Phân loại: ${pType}`); if(pForm) logDetails.push(`Hình thức: ${pForm}`); if(pSol) logDetails.push(`Giải pháp ID: ${pSol}`); if(pKey) logDetails.push(`Từ khóa: "${pKey}"`);
-        if(logDetails.length > 0) apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'SEARCH', details: logDetails.join(', ') }) }).catch(e=>console.log("Log error"));
+        if(logDetails.length > 0) apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'SEARCH', details: logDetails.join(', ') }) }).catch(()=>{});
 
         document.getElementById('count-results').textContent = currentBlocks.length + ' kết quả';
         const render = (blocks) => blocks.length ? blocks.map(renderBlockCard).join('') : `<p class="text-sm text-slate-500 italic p-6 text-center border border-dashed border-gray-700 rounded-lg">Không tìm thấy tài liệu thuyết minh nào khớp với bộ lọc của bạn.</p>`;
@@ -324,27 +517,321 @@
     function formatHtmlForMsWord(rawHtml) {
       const w = document.createElement('div'); w.innerHTML = rawHtml;
       w.querySelectorAll('table').forEach(t => { t.setAttribute('border', '1'); t.style.borderCollapse = 'collapse'; t.style.width = '100%'; t.style.fontFamily = "'Times New Roman', serif"; t.style.fontSize = '13pt'; t.style.color = '#000000'; t.style.backgroundColor = '#ffffff'; });
-      w.querySelectorAll('th, td').forEach(c => { c.style.border = '1px solid #000000'; c.style.padding = '6px 8px'; c.style.fontFamily = "'Times New Roman', serif"; c.style.fontSize = '13pt'; c.style.color = '#000000'; });
-      w.querySelectorAll('p, li, h3, h4, span, div, strong, b, i, u').forEach(el => { el.style.fontFamily = "'Times New Roman', serif"; el.style.color = '#000000'; if (['P','LI','DIV'].includes(el.tagName)) { el.style.fontSize = '13pt'; el.style.lineHeight = '1.5'; el.style.textAlign = 'justify'; } });
+      w.querySelectorAll('th, td').forEach(c => { c.style.border = '1px solid #000000'; c.style.padding = '6px 8px'; c.style.fontFamily = "'Times New Roman', serif"; c.style.fontSize = '13pt'; c.style.color = '#000000'; if(c.tagName === 'TH') c.style.backgroundColor = '#e2e8f0'; else c.style.backgroundColor = '#ffffff'; });
+      w.querySelectorAll('img').forEach(img => {
+        if (img.src && img.src.startsWith('/')) img.src = window.location.origin + img.src;
+      });
+      w.querySelectorAll('p, li, h2, h3, h4, span, div, strong, b, i, u').forEach(el => { el.style.fontFamily = "'Times New Roman', serif"; el.style.color = '#000000'; if (['P','LI','DIV'].includes(el.tagName)) { el.style.fontSize = '13pt'; el.style.lineHeight = '1.5'; if(!el.style.textAlign) el.style.textAlign = 'justify'; } });
       return `<div style="font-family: 'Times New Roman', serif; font-size: 13pt; line-height: 1.5; color: #000000; background: #ffffff;">${w.innerHTML}</div>`;
     }
 
     async function copyRichTextToWord(id, btn) {
       const b = currentBlocks.find(x => x.id === id); if (!b) return;
-      apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'COPY', details: `Copy ID [${b.id}] - ${b.title}` }) }).catch(e=>console.log("Log error"));
+      apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'COPY', details: `Copy ID [${b.id}] - ${b.title}` }) }).catch(()=>{});
       try {
         await navigator.clipboard.write([ new ClipboardItem({ 'text/html': new Blob([formatHtmlForMsWord(b.html_content)],{type:'text/html'}), 'text/plain': new Blob([document.getElementById('block-content-'+id).innerText],{type:'text/plain'}) }) ]);
         const ori = btn.textContent; btn.textContent = '✓ Đã Copy!'; btn.classList.replace('bg-blue-600', 'bg-emerald-600'); showToast('Đã copy dữ liệu chuẩn format MS Word!');
         setTimeout(() => { btn.textContent = ori; btn.classList.replace('bg-emerald-600', 'bg-blue-600'); }, 2000);
-      } catch (err) { showToast('Lỗi: Trình duyệt không hỗ trợ Clipboard API.'); }
+      } catch (err) { showToast('Lỗi: Trình duyệt yêu cầu HTTPS để dùng Clipboard API.'); }
     }
 
     function exportSelectedToWord() {
       const cIds = Array.from(document.querySelectorAll('.export-checkbox:checked')).map(cb => Number(cb.value)); const sBlocks = currentBlocks.filter(b => cIds.includes(b.id));
       if (!sBlocks.length) return showToast('Vui lòng chọn ít nhất 1 mục để xuất Word!');
-      apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'COPY', details: `Xuất file Word gồm ${sBlocks.length} mục` }) }).catch(e=>console.log("Log error"));
+      apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'COPY', details: `Xuất file Word gồm ${sBlocks.length} mục` }) }).catch(()=>{});
       const doc = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family: 'Times New Roman', serif; font-size: 13pt; color: #000000; background: #ffffff;">${sBlocks.map(b => formatHtmlForMsWord(b.html_content)).join('<br/><br/>')}</body></html>`;
       const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob(['\ufeff', doc], {type: 'application/msword'})); link.download = 'Thuyet_Minh_Giai_Phap.doc'; link.click(); showToast('Đã tải xuống file Thuyet_Minh_Giai_Phap.doc');
+    }
+
+    // ==========================================
+    // TRÌNH SOẠN THẢO NÂNG CAO (BẢNG & HÌNH ẢNH)
+    // ==========================================
+    function initRichEditorInteractions() {
+      const editor = document.getElementById('rich-editor');
+
+      // Bắt sự kiện click trong Editor để bật/tắt thanh công cụ Bảng hoặc Ảnh
+      editor.addEventListener('click', (e) => {
+        clearEditorSelections();
+
+        // 1. Kiểm tra nếu click vào Ảnh
+        if (e.target.tagName === 'IMG') {
+          activeImage = e.target;
+          activeImage.classList.add('selected-editor-img');
+          document.getElementById('image-context-toolbar').classList.remove('hidden');
+        } else {
+          document.getElementById('image-context-toolbar').classList.add('hidden');
+        }
+
+        // 2. Kiểm tra nếu click vào Ô trong Bảng (TD / TH)
+        const cell = e.target.closest('td, th');
+        if (cell && editor.contains(cell)) {
+          activeTableCell = cell;
+          activeTableCell.classList.add('selected-editor-cell');
+          document.getElementById('table-context-toolbar').classList.remove('hidden');
+        } else {
+          document.getElementById('table-context-toolbar').classList.add('hidden');
+        }
+      });
+
+      // Hỗ trợ Ctrl+V dán ảnh trực tiếp từ Clipboard (Snipping Tool, Word, v.v.)
+      editor.addEventListener('paste', async (e) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].type.indexOf('image') !== -1) {
+            e.preventDefault();
+            const file = items[i].getAsFile();
+            await uploadFileAndInsertImage(file);
+            return;
+          }
+        }
+      });
+
+      // Hỗ trợ Kéo & Thả (Drag & Drop) file ảnh thẳng vào Editor
+      editor.addEventListener('dragover', (e) => { e.preventDefault(); });
+      editor.addEventListener('drop', async (e) => {
+        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+          const file = e.dataTransfer.files[0];
+          if (file.type.startsWith('image/')) {
+            e.preventDefault();
+            await uploadFileAndInsertImage(file);
+          }
+        }
+      });
+    }
+
+    function clearEditorSelections() {
+      document.querySelectorAll('#rich-editor .selected-editor-img').forEach(el => el.classList.remove('selected-editor-img'));
+      document.querySelectorAll('#rich-editor .selected-editor-cell').forEach(el => el.classList.remove('selected-editor-cell'));
+      activeImage = null;
+      activeTableCell = null;
+    }
+
+    function toggleMetadataPanel() {
+      const panel = document.getElementById('editor-metadata-panel');
+      const btn = document.getElementById('btn-toggle-meta');
+      if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        btn.textContent = 'Thu gọn thông tin chung ▲';
+      } else {
+        panel.classList.add('hidden');
+        btn.textContent = 'Mở rộng thông tin chung ▼';
+      }
+    }
+
+    function toggleFullscreenEditor() {
+      const wrapper = document.getElementById('editor-wrapper');
+      const btn = document.getElementById('btn-fullscreen');
+      wrapper.classList.toggle('editor-fullscreen');
+      if (wrapper.classList.contains('editor-fullscreen')) {
+        btn.textContent = '✕ Thoát Toàn màn hình';
+        document.getElementById('editor-metadata-panel').classList.add('hidden');
+        document.getElementById('btn-toggle-meta').textContent = 'Mở rộng thông tin chung ▼';
+      } else {
+        btn.textContent = '⛶ Toàn màn hình';
+      }
+    }
+
+    function toggleSourceCode() {
+      const rich = document.getElementById('rich-editor');
+      const source = document.getElementById('html-source-editor');
+      const btn = document.getElementById('btn-source-code');
+      isSourceMode = !isSourceMode;
+      if (isSourceMode) {
+        clearEditorSelections();
+        source.value = rich.innerHTML;
+        rich.classList.add('hidden');
+        source.classList.remove('hidden');
+        btn.classList.replace('text-amber-400', 'text-emerald-400');
+        btn.textContent = '👁 Quay lại Soạn thảo trực quan';
+      } else {
+        rich.innerHTML = source.value;
+        source.classList.add('hidden');
+        rich.classList.remove('hidden');
+        btn.classList.replace('text-emerald-400', 'text-amber-400');
+        btn.textContent = '</> Xem mã HTML';
+      }
+    }
+
+    function execCmd(c, v = null) {
+      document.getElementById('rich-editor').focus();
+      document.execCommand(c, false, v);
+    }
+
+    // --- XỬ LÝ BẢNG (TABLE ACTIONS) ---
+    function openTableModal() {
+      document.getElementById('table-modal').classList.remove('hidden');
+    }
+
+    function confirmInsertCustomTable() {
+      const rows = Math.max(1, parseInt(document.getElementById('tbl-rows').value) || 3);
+      const cols = Math.max(1, parseInt(document.getElementById('tbl-cols').value) || 3);
+      const hasHeader = document.getElementById('tbl-has-header').checked;
+
+      let html = '<table>';
+      if (hasHeader) {
+        html += '<thead><tr>';
+        for (let c = 0; c < cols; c++) html += `<th>Tiêu đề ${c + 1}</th>`;
+        html += '</tr></thead>';
+      }
+      html += '<tbody>';
+      const bodyRows = hasHeader ? Math.max(1, rows - 1) : rows;
+      for (let r = 0; r < bodyRows; r++) {
+        html += '<tr>';
+        for (let c = 0; c < cols; c++) html += '<td>Nội dung...</td>';
+        html += '</tr>';
+      }
+      html += '</tbody></table><p><br/></p>';
+
+      document.getElementById('table-modal').classList.add('hidden');
+      execCmd('insertHTML', html);
+    }
+
+    function insertSampleSpecTable() {
+      execCmd('insertHTML', `<table><thead><tr><th style="width:60px;">STT</th><th style="width:30%;">Hạng mục / Thông số</th><th>Yêu cầu kỹ thuật chi tiết</th></tr></thead><tbody><tr><td>1</td><td>Hiệu năng hệ thống</td><td>Đáp ứng tối thiểu...</td></tr><tr><td>2</td><td>Cổng kết nối</td><td>Tích hợp sẵn...</td></tr></tbody></table><p><br/></p>`);
+    }
+
+    function tableAction(action, value = null) {
+      if (!activeTableCell) return showToast('Vui lòng nhấp chuột vào 1 ô trong bảng trước!');
+      const row = activeTableCell.parentElement;
+      const table = activeTableCell.closest('table');
+      const cellIndex = activeTableCell.cellIndex;
+
+      if (action === 'addRowAbove' || action === 'addRowBelow') {
+        const newRow = document.createElement('tr');
+        const colCount = row.children.length;
+        for (let i = 0; i < colCount; i++) {
+          const td = document.createElement('td');
+          td.innerHTML = 'Nội dung...';
+          newRow.appendChild(td);
+        }
+        if (action === 'addRowAbove') row.parentElement.insertBefore(newRow, row);
+        else row.parentElement.insertBefore(newRow, row.nextSibling);
+      }
+      else if (action === 'deleteRow') {
+        if (table.querySelectorAll('tr').length <= 1) {
+          table.remove();
+          document.getElementById('table-context-toolbar').classList.add('hidden');
+        } else {
+          row.remove();
+        }
+        activeTableCell = null;
+      }
+      else if (action === 'addColLeft' || action === 'addColRight') {
+        table.querySelectorAll('tr').forEach(tr => {
+          const refCell = tr.children[cellIndex] || tr.lastElementChild;
+          const isHeader = refCell && refCell.tagName === 'TH';
+          const newCell = document.createElement(isHeader ? 'th' : 'td');
+          newCell.innerHTML = isHeader ? 'Tiêu đề' : 'Nội dung...';
+          if (action === 'addColLeft') tr.insertBefore(newCell, refCell);
+          else tr.insertBefore(newCell, refCell ? refCell.nextSibling : null);
+        });
+      }
+      else if (action === 'deleteCol') {
+        const totalCols = row.children.length;
+        if (totalCols <= 1) {
+          table.remove();
+          document.getElementById('table-context-toolbar').classList.add('hidden');
+        } else {
+          table.querySelectorAll('tr').forEach(tr => {
+            if (tr.children[cellIndex]) tr.children[cellIndex].remove();
+          });
+        }
+        activeTableCell = null;
+      }
+      else if (action === 'mergeRight') {
+        const nextCell = activeTableCell.nextElementSibling;
+        if (!nextCell) return showToast('Không có ô bên phải để gộp!');
+        const curSpan = parseInt(activeTableCell.getAttribute('colspan') || '1');
+        const nextSpan = parseInt(nextCell.getAttribute('colspan') || '1');
+        activeTableCell.setAttribute('colspan', curSpan + nextSpan);
+        if (nextCell.innerHTML.trim() && nextCell.innerHTML !== 'Nội dung...') {
+          activeTableCell.innerHTML += ' ' + nextCell.innerHTML;
+        }
+        nextCell.remove();
+      }
+      else if (action === 'splitCell') {
+        const curSpan = parseInt(activeTableCell.getAttribute('colspan') || '1');
+        if (curSpan <= 1) return showToast('Ô này chưa được gộp!');
+        activeTableCell.removeAttribute('colspan');
+        for (let i = 1; i < curSpan; i++) {
+          const newCell = document.createElement(activeTableCell.tagName.toLowerCase());
+          newCell.innerHTML = 'Nội dung...';
+          row.insertBefore(newCell, activeTableCell.nextSibling);
+        }
+      }
+      else if (action === 'cellBg') {
+        activeTableCell.style.backgroundColor = value;
+      }
+      else if (action === 'deleteTable') {
+        if (confirm('Xóa toàn bộ bảng này?')) {
+          table.remove();
+          activeTableCell = null;
+          document.getElementById('table-context-toolbar').classList.add('hidden');
+        }
+      }
+    }
+
+    // --- XỬ LÝ HÌNH ẢNH (IMAGE ACTIONS) ---
+    async function uploadFileAndInsertImage(file) {
+      const fd = new FormData();
+      fd.append('image', file);
+      showToast('Đang tải ảnh lên máy chủ...');
+      try {
+        const d = await apiFetch('/api/upload', { method: 'POST', body: fd });
+        execCmd('insertHTML', `<p style="text-align:center;"><img src="${d.url}" style="width:75%; max-width:100%; height:auto;" /></p><p><br/></p>`);
+        showToast('Đã chèn ảnh thành công! Nhấp vào ảnh để chỉnh kích thước.');
+      } catch (e) {
+        showToast('Lỗi tải ảnh: ' + e.message);
+      }
+    }
+
+    async function uploadImageToEditor(inp) {
+      if (!inp.files || !inp.files[0]) return;
+      await uploadFileAndInsertImage(inp.files[0]);
+      inp.value = '';
+    }
+
+    function imageAction(action, value = null) {
+      if (!activeImage) return showToast('Vui lòng nhấp chọn ảnh trước!');
+      if (action === 'resize') {
+        activeImage.style.width = value;
+        activeImage.removeAttribute('width');
+      }
+      else if (action === 'customSize') {
+        const px = prompt('Nhập chiều rộng ảnh (VD: 500px hoặc 60%):', activeImage.style.width || '500px');
+        if (px) {
+          activeImage.style.width = px.includes('%') || px.includes('px') ? px : px + 'px';
+          if (px.endsWith('px')) activeImage.setAttribute('width', parseInt(px));
+        }
+      }
+      else if (action === 'align') {
+        const parent = activeImage.parentElement;
+        if (parent && ['P', 'DIV'].includes(parent.tagName)) {
+          parent.style.textAlign = value;
+        } else {
+          activeImage.style.display = 'block';
+          activeImage.style.marginLeft = value === 'center' || value === 'right' ? 'auto' : '0';
+          activeImage.style.marginRight = value === 'center' || value === 'left' ? 'auto' : '0';
+        }
+      }
+      else if (action === 'caption') {
+        const capText = prompt('Nhập dòng chú thích dưới ảnh:', 'Hình 1: Sơ đồ kiến trúc tổng thể');
+        if (capText) {
+          const capEl = document.createElement('p');
+          capEl.style.textAlign = 'center';
+          capEl.style.fontStyle = 'italic';
+          capEl.style.fontSize = '13px';
+          capEl.style.color = '#94a3b8';
+          capEl.textContent = capText;
+          const container = activeImage.closest('p, div') || activeImage;
+          container.parentElement.insertBefore(capEl, container.nextSibling);
+        }
+      }
+      else if (action === 'delete') {
+        activeImage.remove();
+        activeImage = null;
+        document.getElementById('image-context-toolbar').classList.add('hidden');
+      }
     }
 
     function renderEditorDropdowns() {
@@ -361,10 +848,15 @@
     }
 
     function onEditorTypeChange() { if(document.getElementById('edit-block-type').value === 'GENERAL_TECH') { const gV = masterData.vendors.find(v => v.is_general); if(gV) document.getElementById('edit-vendor').value = gV.id; } renderEditorModels(); }
-    function execCmd(c,v=null){ document.execCommand(c,false,v); }
-    function insertSampleSpecTable(){ document.execCommand('insertHTML',false,`<table><thead><tr><th>STT</th><th>Thông số</th><th>Yêu cầu</th></tr></thead><tbody><tr><td>1</td><td>Hiệu năng</td><td>...</td></tr></tbody></table><p></p>`); }
-    async function uploadImageToEditor(inp) { if(!inp.files||!inp.files[0]) return; const fd = new FormData(); fd.append('image', inp.files[0]); try { const d = await apiFetch('/api/upload', {method:'POST', body:fd}); document.execCommand('insertHTML',false,`<p><img src="${d.url}" style="max-width:100%;" /></p>`); showToast('Đã chèn ảnh!'); } catch(e) { showToast(e.message); } }
-    function resetEditorForm() { document.getElementById('edit-block-id').value = ''; document.getElementById('editor-form-title').textContent = 'Thêm mới Khối nội dung'; document.getElementById('edit-title').value = ''; document.getElementById('rich-editor').innerHTML = '<h3>1. Tiêu đề</h3><p>Nội dung...</p>'; }
+
+    function resetEditorForm() {
+      clearEditorSelections();
+      document.getElementById('edit-block-id').value = '';
+      document.getElementById('editor-form-title').textContent = 'Thêm mới Khối nội dung';
+      document.getElementById('edit-title').value = '';
+      document.getElementById('rich-editor').innerHTML = '<h3>1. Tiêu đề mục thuyết minh</h3><p>Nhập nội dung...</p>';
+      document.getElementById('html-source-editor').value = document.getElementById('rich-editor').innerHTML;
+    }
     
     function openEditBlock(id) {
       const b = currentBlocks.find(x => x.id === id); if(!b) return; switchTab('editor');
@@ -372,17 +864,39 @@
       document.getElementById('edit-title').value = b.title; document.getElementById('edit-block-type').value = b.block_type;
       document.getElementById('edit-solution').value = b.solution_id; if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
       const pIds = (b.purposes||[]).map(p=>p.id); document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
-      renderEditorModels((b.models||[]).map(m=>m.id)); document.getElementById('rich-editor').innerHTML = b.html_content;
+      renderEditorModels((b.models||[]).map(m=>m.id));
+      document.getElementById('rich-editor').innerHTML = b.html_content;
+      document.getElementById('html-source-editor').value = b.html_content;
     }
 
     async function saveContentBlock() {
+      clearEditorSelections();
+      if (isSourceMode) {
+        document.getElementById('rich-editor').innerHTML = document.getElementById('html-source-editor').value;
+      }
       const id = document.getElementById('edit-block-id').value;
-      const p = { title: document.getElementById('edit-title').value.trim(), block_type: document.getElementById('edit-block-type').value, solution_id: Number(document.getElementById('edit-solution').value), vendor_id: Number(document.getElementById('edit-vendor').value), html_content: document.getElementById('rich-editor').innerHTML, purpose_ids: Array.from(document.querySelectorAll('.edit-purpose-cb:checked')).map(c=>Number(c.value)), model_ids: Array.from(document.querySelectorAll('.edit-model-cb:checked')).map(c=>Number(c.value)) };
-      if(!p.title || !p.purpose_ids.length) return showToast('Nhập Tiêu đề và Mục đích!');
-      try { if (id) await apiFetch('/api/content-blocks/'+id, {method:'PUT', body:JSON.stringify(p)}); else await apiFetch('/api/content-blocks', {method:'POST', body:JSON.stringify(p)}); showToast('Lưu thành công!'); resetEditorForm(); switchTab('search'); loadContentBlocks(); } catch(e) { showToast(e.message); }
+      const p = {
+        title: document.getElementById('edit-title').value.trim(),
+        block_type: document.getElementById('edit-block-type').value,
+        solution_id: Number(document.getElementById('edit-solution').value),
+        vendor_id: Number(document.getElementById('edit-vendor').value),
+        html_content: document.getElementById('rich-editor').innerHTML,
+        purpose_ids: Array.from(document.querySelectorAll('.edit-purpose-cb:checked')).map(c=>Number(c.value)),
+        model_ids: Array.from(document.querySelectorAll('.edit-model-cb:checked')).map(c=>Number(c.value))
+      };
+      if(!p.title || !p.purpose_ids.length) return showToast('Vui lòng nhập Tiêu đề và chọn ít nhất 1 Mục đích!');
+      try {
+        if (id) await apiFetch('/api/content-blocks/'+id, {method:'PUT', body:JSON.stringify(p)});
+        else await apiFetch('/api/content-blocks', {method:'POST', body:JSON.stringify(p)});
+        showToast('Lưu dữ liệu thành công!');
+        if (document.getElementById('editor-wrapper').classList.contains('editor-fullscreen')) toggleFullscreenEditor();
+        resetEditorForm(); switchTab('search'); loadContentBlocks();
+      } catch(e) { showToast(e.message); }
     }
+
     async function deleteBlock(id) { if(!confirm('Bạn có chắc muốn xóa VĨNH VIỄN khối nội dung thuyết minh này?')) return; await apiFetch('/api/content-blocks/'+id, {method:'DELETE'}); showToast('Đã xóa!'); loadContentBlocks(); }
 
+    // --- DANH MỤC, BACKUP & USER ---
     async function deleteSolution(id) { if(!confirm('Xóa Giải pháp này?')) return; try { await apiFetch('/api/solutions/'+id, {method:'DELETE'}); showToast('Đã xóa Giải pháp!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
     async function deleteVendor(id) { if(!confirm('Xóa Hãng này?')) return; try { await apiFetch('/api/vendors/'+id, {method:'DELETE'}); showToast('Đã xóa Hãng!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
     async function deleteModel(id) { if(!confirm('Xóa Model này?')) return; try { await apiFetch('/api/models/'+id, {method:'DELETE'}); showToast('Đã xóa Model!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
@@ -422,7 +936,6 @@
       if(!username||!password||!full_name) return showToast('Nhập đủ thông tin!'); await apiFetch('/api/users', {method:'POST', body:JSON.stringify({username,password,full_name,role})}); showToast('Đã tạo User!'); loadUsers();
     }
 
-    // BACKUP & RESTORE
     function downloadBackup() {
       if(!confirm('Hệ thống sẽ tạo bản sao lưu và tự động tải xuống. Tiếp tục?')) return;
       window.location.href = `/api/backup?token=${authToken}`;
@@ -432,18 +945,9 @@
       const fileInput = document.getElementById('restore-file-input');
       if(!fileInput.files.length) return showToast('Vui lòng chọn file .sql để phục hồi!');
       if(!confirm('CẢNH BÁO NGUY HIỂM: Toàn bộ dữ liệu hiện tại sẽ bị xóa sạch và ghi đè bằng dữ liệu từ file backup. Bạn chắc chắn chứ?')) return;
-
-      const fd = new FormData();
-      fd.append('backup_file', fileInput.files[0]);
-      
+      const fd = new FormData(); fd.append('backup_file', fileInput.files[0]);
       showToast('Đang phục hồi dữ liệu, vui lòng không đóng trang...');
-      try {
-        await apiFetch('/api/restore', { method: 'POST', body: fd });
-        showToast('Phục hồi thành công! Hệ thống sẽ tự động tải lại...');
-        setTimeout(() => window.location.reload(), 2500);
-      } catch (err) {
-        showToast('Lỗi: ' + err.message);
-      }
+      try { await apiFetch('/api/restore', { method: 'POST', body: fd }); showToast('Phục hồi thành công! Hệ thống sẽ tự động tải lại...'); setTimeout(() => window.location.reload(), 2500); } catch (err) { showToast('Lỗi: ' + err.message); }
     }
 
     async function submitChangePassword() {
@@ -451,13 +955,7 @@
       if (!old_password || !new_password || !confirm_password) return showToast('Vui lòng nhập đầy đủ thông tin!');
       if (new_password !== confirm_password) return showToast('Mật khẩu mới không khớp!');
       if (new_password.length < 6) return showToast('Mật khẩu mới phải từ 6 ký tự trở lên!');
-
-      try {
-        await apiFetch('/api/users/change-password', { method: 'PATCH', body: JSON.stringify({ old_password, new_password }) });
-        showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
-        document.getElementById('change-password-modal').classList.add('hidden');
-        setTimeout(logout, 2000);
-      } catch (e) { showToast(e.message); }
+      try { await apiFetch('/api/users/change-password', { method: 'PATCH', body: JSON.stringify({ old_password, new_password }) }); showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'); document.getElementById('change-password-modal').classList.add('hidden'); setTimeout(logout, 2000); } catch (e) { showToast(e.message); }
     }
 
     async function fetchAuditLogs() {
