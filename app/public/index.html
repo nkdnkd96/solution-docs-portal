@@ -8,15 +8,10 @@
   <script>
     tailwind.config = {
       darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { gray: { 750: '#2d3748', 850: '#1a202c', 900: '#111827', 950: '#030712' } }
-        }
-      }
+      theme: { extend: { colors: { gray: { 750: '#2d3748', 850: '#1a202c', 900: '#111827', 950: '#030712' } } } }
     }
   </script>
   <style>
-    /* Dark mode Rich Text styles */
     .rich-preview table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 14px; color: #e2e8f0; }
     .rich-preview th, .rich-preview td { border: 1px solid #475569; padding: 8px 10px; text-align: left; }
     .rich-preview th { background-color: #334155; font-weight: 700; color: #f8fafc; }
@@ -28,12 +23,11 @@
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #64748b; }
   
-    /* Accordion styles */
     .content-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; opacity: 0; }
     .content-body.expanded { max-height: 2000px; opacity: 1; padding-top: 1rem; border-top: 1px solid #374151; margin-top: 0.75rem; }
     .toggle-icon { transition: transform 0.3s ease; }
     .expanded .toggle-icon { transform: rotate(180deg); }
-</style>
+  </style>
 </head>
 <body class="bg-gray-950 text-slate-300 min-h-screen font-sans">
 
@@ -46,42 +40,28 @@
         <p class="text-sm text-slate-400 mt-1">Kho dữ liệu thuyết minh dự án</p>
       </div>
       <form id="login-form" class="space-y-4">
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1">Tên đăng nhập</label>
-          <input type="text" id="login-username" required value="admin" class="w-full px-3.5 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label>
-          <input type="password" id="login-password" required value="admin123" class="w-full px-3.5 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" />
-        </div>
+        <div><label class="block text-sm font-medium text-slate-300 mb-1">Tên đăng nhập</label><input type="text" id="login-username" required value="admin" class="w-full px-3.5 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" /></div>
+        <div><label class="block text-sm font-medium text-slate-300 mb-1">Mật khẩu</label><input type="password" id="login-password" required value="admin123" class="w-full px-3.5 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none" /></div>
         <div id="login-error" class="hidden text-sm text-red-400 bg-red-900/30 border border-red-800 p-2.5 rounded-lg"></div>
         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded-lg transition shadow-lg">Đăng nhập Hệ thống</button>
       </form>
     </div>
   </div>
 
-  <!-- MÀN HÌNH CHÍNH (MAIN PORTAL) -->
+  <!-- MÀN HÌNH CHÍNH -->
   <div id="app-screen" class="hidden min-h-screen flex flex-col">
-    <!-- Thanh điều hướng -->
     <header class="bg-gray-900 border-b border-gray-800 sticky top-0 z-40">
       <div class="max-w-[1440px] mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-[0_0_10px_rgba(37,99,235,0.4)]">SD</div>
-          <div>
-            <h1 class="font-bold text-base leading-tight text-white tracking-wide">SOLUTION DOCS</h1>
-            <p class="text-[11px] text-slate-400 uppercase tracking-widest">Portal</p>
-          </div>
+          <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white">SD</div>
+          <div><h1 class="font-bold text-base leading-tight text-white tracking-wide">SOLUTION DOCS</h1><p class="text-[11px] text-slate-400 uppercase tracking-widest">Portal</p></div>
         </div>
-
-        <!-- Menu Tabs -->
         <div class="flex items-center gap-2 bg-gray-800 p-1 rounded-lg border border-gray-700">
           <button onclick="switchTab('search')" id="tab-btn-search" class="px-4 py-1.5 rounded-md text-sm font-medium bg-gray-700 text-white shadow">Tra cứu & Copy</button>
           <button onclick="switchTab('editor')" id="tab-btn-editor" class="admin-only hidden px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 hover:text-white hover:bg-gray-700 transition">Soạn thảo</button>
           <button onclick="switchTab('master')" id="tab-btn-master" class="admin-only hidden px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 hover:text-white hover:bg-gray-700 transition">Danh mục</button>
           <button onclick="switchTab('logs')" id="tab-btn-logs" class="admin-only hidden px-4 py-1.5 rounded-md text-sm font-medium text-slate-400 hover:text-white hover:bg-gray-700 transition">Nhật ký</button>
         </div>
-
-        <!-- User Info -->
         <div class="flex items-center gap-3">
           <div class="text-right hidden sm:block relative group">
             <div class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-gray-800 transition">
@@ -91,7 +71,6 @@
               </div>
               <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
-            <!-- Dropdown Menu -->
             <div class="absolute right-0 mt-1 w-40 bg-gray-800 border border-gray-700 rounded-lg shadow-xl py-1 hidden group-hover:block z-50">
               <button onclick="document.getElementById('change-password-modal').classList.remove('hidden'); document.getElementById('cp-old').value=''; document.getElementById('cp-new').value=''; document.getElementById('cp-confirm').value='';" class="w-full text-left px-4 py-2 text-sm text-slate-300 hover:bg-gray-700 hover:text-white transition">Đổi mật khẩu</button>
             </div>
@@ -105,21 +84,18 @@
     <main id="tab-search" class="flex-1 max-w-[1440px] w-full mx-auto px-4 py-6 grid grid-cols-1 xl:grid-cols-12 gap-6">
       <aside class="xl:col-span-3 space-y-4">
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4 sticky top-24 shadow-lg">
-          <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-            <h2 class="font-bold text-white text-sm uppercase tracking-wider flex items-center gap-2"><svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>Bộ lọc dữ liệu</h2>
-            <button onclick="resetFilters()" class="text-[11px] text-slate-400 hover:text-white uppercase font-semibold tracking-wider">Đặt lại</button>
-          </div>
+          <div class="flex items-center justify-between border-b border-gray-800 pb-3"><h2 class="font-bold text-white text-sm uppercase tracking-wider">Bộ lọc dữ liệu</h2><button onclick="resetFilters()" class="text-[11px] text-slate-400 hover:text-white uppercase font-semibold">Đặt lại</button></div>
           <div class="space-y-3.5">
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Phân loại Thuyết minh</label><select id="filter-block-type" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none"><option value="">-- Tất cả loại --</option><option value="GENERAL_TECH">Thuyết minh chung</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình thức dự án</label><select id="filter-form" onchange="onFormChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none"><option value="">-- Tất cả --</option><option value="DAU_TU">Đầu tư CNTT</option><option value="THUE_DICH_VU">Thuê dịch vụ</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mục đích tài liệu</label><select id="filter-purpose" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Loại giải pháp</label><select id="filter-solution" onchange="onSolutionFilterChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hãng sản xuất (Vendor)</label><select id="filter-vendor" onchange="onVendorFilterChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Model / Phiên bản</label><select id="filter-model" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Từ khóa tìm kiếm</label><input type="text" id="filter-keyword" placeholder="VD: Firewall, SLA..." class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 focus:border-blue-500 outline-none placeholder-slate-600" /></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Phân loại Thuyết minh</label><select id="filter-block-type" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả loại --</option><option value="GENERAL_TECH">Thuyết minh chung</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình thức dự án</label><select id="filter-form" onchange="onFormChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option><option value="DAU_TU">Đầu tư CNTT</option><option value="THUE_DICH_VU">Thuê dịch vụ</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mục đích tài liệu</label><select id="filter-purpose" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Loại giải pháp</label><select id="filter-solution" onchange="onSolutionFilterChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hãng sản xuất</label><select id="filter-vendor" onchange="onVendorFilterChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Model / Phiên bản</label><select id="filter-model" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Từ khóa tìm kiếm</label><input type="text" id="filter-keyword" placeholder="VD: Firewall..." class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none" /></div>
           </div>
-          <div class="pt-3"><button onclick="loadContentBlocks()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold py-3 rounded-lg shadow-[0_0_15px_rgba(37,99,235,0.3)] transition flex items-center justify-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>LỌC KẾT QUẢ</button></div>
-          <div class="pt-4 border-t border-gray-800"><button onclick="exportSelectedToWord()" class="w-full bg-emerald-600/20 text-emerald-400 border border-emerald-800 hover:bg-emerald-600/40 text-sm font-semibold py-2.5 px-3 rounded-lg transition flex items-center justify-center gap-2">Xuất nhiều mục ra Word (.doc)</button></div>
+          <div class="pt-3"><button onclick="loadContentBlocks()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold py-3 rounded-lg shadow transition">LỌC KẾT QUẢ</button></div>
+          <div class="pt-4 border-t border-gray-800"><button onclick="exportSelectedToWord()" class="w-full bg-emerald-600/20 text-emerald-400 border border-emerald-800 hover:bg-emerald-600/40 text-sm font-semibold py-2.5 px-3 rounded-lg transition">Xuất nhiều mục ra Word (.doc)</button></div>
         </div>
       </aside>
 
@@ -134,31 +110,31 @@
       </section>
     </main>
 
-    <!-- TAB 2: SOẠN THẢO (ADMIN) -->
+    <!-- TAB 2: SOẠN THẢO -->
     <main id="tab-editor" class="hidden flex-1 max-w-5xl w-full mx-auto px-4 py-6">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-xl space-y-5">
         <div class="flex items-center justify-between border-b border-gray-800 pb-4"><h2 id="editor-form-title" class="text-lg font-bold text-white">Thêm mới Khối nội dung</h2><button onclick="resetEditorForm()" class="text-xs text-blue-400 hover:text-blue-300">Làm mới Form</button></div>
         <input type="hidden" id="edit-block-id" value="" />
         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-400 mb-1">Tiêu đề (Title) *</label><input type="text" id="edit-title" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm focus:border-blue-500 outline-none" /></div>
-          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Phân loại *</label><select id="edit-block-type" onchange="onEditorTypeChange()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"><option value="GENERAL_TECH">Thuyết minh chung (Công nghệ / Kiến trúc)</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
+          <div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-400 mb-1">Tiêu đề (Title) *</label><input type="text" id="edit-title" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3.5 py-2.5 text-sm outline-none" /></div>
+          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Phân loại *</label><select id="edit-block-type" onchange="onEditorTypeChange()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"><option value="GENERAL_TECH">Thuyết minh chung</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
           <div><label class="block text-xs font-semibold text-slate-400 mb-1">Loại giải pháp *</label><select id="edit-solution" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"></select></div>
           <div><label class="block text-xs font-semibold text-slate-400 mb-1">Hãng sản xuất</label><select id="edit-vendor" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 text-sm"></select></div>
-          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Gắn với Model thiết bị (Chọn nhiều)</label><div id="edit-models-container" class="bg-gray-800 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto space-y-1.5 text-sm text-slate-300"></div></div>
-          <div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-400 mb-1">Mục đích sử dụng tài liệu (Chọn nhiều) *</label><div id="edit-purposes-container" class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-gray-800 border border-gray-700 rounded-lg p-4 text-sm text-slate-300"></div></div>
+          <div><label class="block text-xs font-semibold text-slate-400 mb-1">Gắn với Model thiết bị (Chọn nhiều)</label><div id="edit-models-container" class="bg-gray-800 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto space-y-1.5 text-sm"></div></div>
+          <div class="md:col-span-2"><label class="block text-xs font-semibold text-slate-400 mb-1">Mục đích sử dụng tài liệu (Chọn nhiều) *</label><div id="edit-purposes-container" class="grid grid-cols-1 md:grid-cols-2 gap-2 bg-gray-800 border border-gray-700 rounded-lg p-4 text-sm"></div></div>
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-400 mb-1">Nội dung HTML (Hỗ trợ chèn bảng) *</label>
           <div class="border border-gray-700 rounded-t-lg bg-gray-800 p-2 flex flex-wrap gap-1.5 items-center">
-            <button type="button" onclick="execCmd('bold')" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-bold transition">B</button>
-            <button type="button" onclick="execCmd('italic')" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs italic transition">I</button>
-            <button type="button" onclick="execCmd('underline')" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs underline transition">U</button>
-            <button type="button" onclick="execCmd('formatBlock', 'H3')" class="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-semibold transition">H3</button>
-            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1 bg-blue-900/40 text-blue-400 hover:bg-blue-900/60 border border-blue-800 rounded text-xs font-medium transition">+ Bảng mẫu</button>
-            <label class="px-3 py-1 bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/60 border border-emerald-800 rounded text-xs font-medium cursor-pointer transition">+ Ảnh sơ đồ<input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" /></label>
+            <button type="button" onclick="execCmd('bold')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs font-bold">B</button>
+            <button type="button" onclick="execCmd('italic')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs italic">I</button>
+            <button type="button" onclick="execCmd('underline')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs underline">U</button>
+            <button type="button" onclick="execCmd('formatBlock', 'H3')" class="px-3 py-1 bg-gray-700 text-white rounded text-xs font-semibold">H3</button>
+            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1 bg-blue-900/40 text-blue-400 border border-blue-800 rounded text-xs">+ Bảng mẫu</button>
+            <label class="px-3 py-1 bg-emerald-900/40 text-emerald-400 border border-emerald-800 rounded text-xs cursor-pointer">+ Ảnh sơ đồ<input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" /></label>
           </div>
-          <div id="rich-editor" contenteditable="true" class="editor-surface rich-preview border border-t-0 border-gray-700 rounded-b-lg p-5 bg-gray-900 focus:outline-none focus:border-blue-500"><h3>1. Tiêu đề</h3><p>Nhập nội dung...</p></div>
+          <div id="rich-editor" contenteditable="true" class="editor-surface rich-preview border border-t-0 border-gray-700 rounded-b-lg p-5 bg-gray-900 focus:outline-none"><h3>1. Tiêu đề</h3><p>Nhập nội dung...</p></div>
         </div>
         <div class="flex justify-end gap-3 pt-4 border-t border-gray-800">
           <button type="button" onclick="switchTab('search')" class="px-5 py-2.5 rounded-lg border border-gray-700 text-slate-300 text-sm hover:bg-gray-800">Hủy</button>
@@ -167,37 +143,66 @@
       </div>
     </main>
 
-    <!-- TAB 3: DANH MỤC & USER (ADMIN) -->
+    <!-- TAB 3: DANH MỤC, BACKUP & USER (ADMIN) -->
     <main id="tab-master" class="hidden flex-1 max-w-[1440px] w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-blue-500">#</span> Quản lý Hãng sản xuất (Vendor)</h3>
         <div class="flex gap-2 mb-4"><input id="new-vendor-name" placeholder="Tên hãng..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createVendor()" class="bg-blue-600/20 text-blue-400 border border-blue-800 hover:bg-blue-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
         <div id="vendors-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
+
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-purple-500">#</span> Quản lý Loại Giải pháp</h3>
-        <div class="flex gap-2 mb-4"><input id="new-sol-code" placeholder="Mã (VD: WIFI)" class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><input id="new-sol-name" placeholder="Tên giải pháp" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createSolution()" class="bg-purple-600/20 text-purple-400 border border-purple-800 hover:bg-purple-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
+        <div class="flex gap-2 mb-4"><input id="new-sol-code" placeholder="Mã..." class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><input id="new-sol-name" placeholder="Tên..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createSolution()" class="bg-purple-600/20 text-purple-400 border border-purple-800 hover:bg-purple-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
         <div id="solutions-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
+
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-amber-500">#</span> Quản lý Model Thiết bị</h3>
-        <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><select id="new-model-solution" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select><select id="new-model-vendor" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select></div><div class="flex gap-2"><input id="new-model-name" placeholder="Tên Model (VD: FortiGate 400F)" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createModel()" class="bg-amber-600/20 text-amber-400 border border-amber-800 hover:bg-amber-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div></div>
+        <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><select id="new-model-solution" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select><select id="new-model-vendor" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select></div><div class="flex gap-2"><input id="new-model-name" placeholder="Tên Model..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createModel()" class="bg-amber-600/20 text-amber-400 border border-amber-800 hover:bg-amber-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div></div>
         <div id="models-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
+
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-emerald-500">#</span> Tài khoản Người dùng</h3>
         <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><input id="new-user-username" placeholder="Username" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><input id="new-user-password" type="password" placeholder="Mật khẩu" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /></div><div class="flex gap-2"><input id="new-user-fullname" placeholder="Họ tên" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><select id="new-user-role" class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"><option value="VIEWER">VIEWER</option><option value="ADMIN">ADMIN</option></select><button onclick="createUser()" class="bg-emerald-600/20 text-emerald-400 border border-emerald-800 hover:bg-emerald-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Tạo</button></div></div>
         <div id="users-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
+      </div>
+
+      <!-- Khu vực Backup & Restore -->
+      <div class="lg:col-span-2 bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col">
+        <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-rose-500">#</span> Sao lưu & Phục hồi Cơ sở dữ liệu (Backup/Restore)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gray-800 p-5 rounded-lg border border-gray-700 flex flex-col justify-between">
+            <div>
+                <h4 class="text-white font-semibold mb-2">Tải xuống Bản sao lưu (Backup)</h4>
+                <p class="text-xs text-slate-400 mb-4">Trích xuất toàn bộ dữ liệu hiện tại (Danh mục, Thuyết minh, Tài khoản, Nhật ký) thành một file mã nguồn <strong>.sql</strong>.</p>
+            </div>
+            <button onclick="downloadBackup()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition shadow">Tải file Backup (.sql)</button>
+          </div>
+          <div class="bg-gray-800 p-5 rounded-lg border border-gray-700 border-l-4 border-l-rose-600 flex flex-col justify-between">
+            <div>
+                <h4 class="text-rose-400 font-semibold mb-2">Phục hồi Dữ liệu (Restore)</h4>
+                <p class="text-xs text-slate-400 mb-4">Tải lên file <strong>.sql</strong> để nạp lại hệ thống. <br/><strong class="text-rose-500">CẢNH BÁO NGUY HIỂM:</strong> Toàn bộ dữ liệu hiện tại sẽ bị ghi đè!</p>
+            </div>
+            <div class="flex gap-2 items-center w-full">
+              <label class="bg-gray-700 hover:bg-gray-600 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition cursor-pointer shrink-0">
+                Chọn file...
+                <input type="file" id="restore-file-input" accept=".sql" class="hidden" onchange="document.getElementById('restore-filename').textContent = this.files[0] ? this.files[0].name : 'Chưa chọn file'" />
+              </label>
+              <span id="restore-filename" class="text-xs text-slate-400 truncate flex-1 px-2">Chưa chọn file</span>
+              <button onclick="restoreBackup()" class="bg-rose-600 text-white hover:bg-rose-700 text-sm font-semibold px-5 py-2.5 rounded-lg transition shrink-0 shadow">Phục hồi</button>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
     <!-- TAB 4: NHẬT KÝ HỆ THỐNG -->
     <main id="tab-logs" class="hidden flex-1 max-w-5xl w-full mx-auto px-4 py-6">
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-xl space-y-4">
-        <div class="flex items-center justify-between border-b border-gray-800 pb-3">
-          <h2 class="text-lg font-bold text-white">Nhật ký truy cập (Audit Logs)</h2><button onclick="fetchAuditLogs()" class="text-sm bg-gray-800 border border-gray-700 text-slate-300 hover:text-white px-3 py-1.5 rounded transition">Làm mới</button>
-        </div>
-        <div class="overflow-x-auto"><table class="w-full text-left text-sm text-slate-300"><thead class="text-xs uppercase bg-gray-800 text-slate-400"><tr><th class="px-4 py-3 rounded-tl-lg">Thời gian</th><th class="px-4 py-3">Người dùng</th><th class="px-4 py-3">Hành động</th><th class="px-4 py-3 rounded-tr-lg">Chi tiết</th></tr></thead><tbody id="logs-tbody" class="divide-y divide-gray-800"></tbody></table></div>
+        <div class="flex items-center justify-between border-b border-gray-800 pb-3"><h2 class="text-lg font-bold text-white">Nhật ký truy cập (Audit Logs)</h2><button onclick="fetchAuditLogs()" class="text-sm bg-gray-800 border border-gray-700 text-slate-300 hover:text-white px-3 py-1.5 rounded transition">Làm mới</button></div>
+        <div class="overflow-x-auto"><table class="w-full text-left text-sm text-slate-300"><thead class="text-xs uppercase bg-gray-800 text-slate-400"><tr><th class="px-4 py-3">Thời gian</th><th class="px-4 py-3">Người dùng</th><th class="px-4 py-3">Hành động</th><th class="px-4 py-3">Chi tiết</th></tr></thead><tbody id="logs-tbody" class="divide-y divide-gray-800"></tbody></table></div>
       </div>
     </main>
   </div>
@@ -207,9 +212,9 @@
     <div class="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 max-w-sm w-full p-6 relative">
       <h3 class="text-lg font-bold text-white mb-4">Đổi Mật Khẩu</h3>
       <div class="space-y-4">
-        <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mật khẩu cũ</label><input type="password" id="cp-old" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-blue-500 outline-none" /></div>
-        <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mật khẩu mới</label><input type="password" id="cp-new" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-blue-500 outline-none" /></div>
-        <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Nhập lại mật khẩu mới</label><input type="password" id="cp-confirm" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:border-blue-500 outline-none" /></div>
+        <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mật khẩu cũ</label><input type="password" id="cp-old" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /></div>
+        <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mật khẩu mới</label><input type="password" id="cp-new" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /></div>
+        <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Nhập lại mật khẩu mới</label><input type="password" id="cp-confirm" class="w-full bg-gray-900 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /></div>
       </div>
       <div class="flex justify-end gap-3 mt-6">
         <button onclick="document.getElementById('change-password-modal').classList.add('hidden')" class="px-4 py-2 rounded-lg border border-gray-700 text-slate-300 text-sm hover:bg-gray-700">Hủy</button>
@@ -218,10 +223,7 @@
     </div>
   </div>
 
-  <!-- Toast -->
-  <div id="toast" class="fixed bottom-6 right-6 hidden bg-gray-800 border border-gray-700 text-white px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium z-50 flex items-center gap-3">
-    <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span id="toast-msg"></span>
-  </div>
+  <div id="toast" class="fixed bottom-6 right-6 hidden bg-gray-800 border border-gray-700 text-white px-5 py-3.5 rounded-xl shadow-2xl text-sm font-medium z-50 flex items-center gap-3"><span id="toast-msg"></span></div>
 
   <script>
     let authToken = localStorage.getItem('portal_token') || '';
@@ -229,12 +231,25 @@
     let masterData = { purposes: [], solutions: [], vendors: [], models: [] };
     let currentBlocks = [];
 
-    function showToast(msg) { document.getElementById('toast-msg').textContent = msg; const t = document.getElementById('toast'); t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 3000); }
-    async function apiFetch(url, options = {}) { const headers = options.headers || {}; if (authToken) headers['Authorization'] = 'Bearer ' + authToken; if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json'; const res = await fetch(url, { ...options, headers }); if (res.status === 401) { logout(); throw new Error('Phiên đăng nhập hết hạn'); } const data = await res.json(); if (!res.ok) throw new Error(data.error || 'Lỗi hệ thống'); return data; }
+    function showToast(msg) { document.getElementById('toast-msg').textContent = msg; const t = document.getElementById('toast'); t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 3500); }
+
+    async function apiFetch(url, options = {}) {
+      const headers = options.headers || {};
+      if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
+      if (!(options.body instanceof FormData)) headers['Content-Type'] = 'application/json';
+      const res = await fetch(url, { ...options, headers });
+      if (res.status === 401) { logout(); throw new Error('Phiên đăng nhập hết hạn'); }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Lỗi hệ thống');
+      return data;
+    }
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault(); const errBox = document.getElementById('login-error'); errBox.classList.add('hidden');
-      try { const data = await apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ username: document.getElementById('login-username').value.trim(), password: document.getElementById('login-password').value }) }); authToken = data.token; currentUser = data.user; localStorage.setItem('portal_token', authToken); localStorage.setItem('portal_user', JSON.stringify(currentUser)); initApp(); } catch (err) { errBox.textContent = err.message; errBox.classList.remove('hidden'); }
+      try {
+        const data = await apiFetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ username: document.getElementById('login-username').value.trim(), password: document.getElementById('login-password').value }) });
+        authToken = data.token; currentUser = data.user; localStorage.setItem('portal_token', authToken); localStorage.setItem('portal_user', JSON.stringify(currentUser)); initApp();
+      } catch (err) { errBox.textContent = err.message; errBox.classList.remove('hidden'); }
     });
 
     function logout() { authToken = ''; currentUser = null; localStorage.clear(); document.getElementById('app-screen').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }
@@ -244,7 +259,7 @@
       document.getElementById('login-screen').classList.add('hidden'); document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('user-fullname').textContent = currentUser.full_name;
       document.getElementById('user-role-badge').textContent = currentUser.role === 'ADMIN' ? 'ADMIN' : 'VIEWER';
-      document.getElementById('user-role-badge').className = currentUser.role === 'ADMIN' ? 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+      document.getElementById('user-role-badge').className = currentUser.role === 'ADMIN' ? 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-amber-500/20 text-amber-400' : 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-emerald-500/20 text-emerald-400';
       document.querySelectorAll('.admin-only').forEach(el => currentUser.role === 'ADMIN' ? el.classList.remove('hidden') : el.classList.add('hidden'));
       await loadMasterData(); switchTab('search');
     }
@@ -258,8 +273,11 @@
       const vSel = document.getElementById('filter-vendor'); const curV = vSel.value; vSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.vendors.filter(v => !v.is_general).forEach(v => vSel.innerHTML += `<option value="${v.id}">${v.name}</option>`); vSel.value = curV;
       updateModelFilterDropdown();
     }
+    function updateModelFilterDropdown() {
+      const sId = Number(document.getElementById('filter-solution').value); const vId = Number(document.getElementById('filter-vendor').value); const mSel = document.getElementById('filter-model');
+      mSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.models.filter(m => (!sId || m.solution_id === sId) && (!vId || m.vendor_id === vId)).forEach(m => mSel.innerHTML += `<option value="${m.id}">${m.vendor_name} - ${m.model_name}</option>`);
+    }
 
-    function updateModelFilterDropdown() { const sId = Number(document.getElementById('filter-solution').value); const vId = Number(document.getElementById('filter-vendor').value); const mSel = document.getElementById('filter-model'); mSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.models.filter(m => (!sId || m.solution_id === sId) && (!vId || m.vendor_id === vId)).forEach(m => mSel.innerHTML += `<option value="${m.id}">${m.vendor_name} - ${m.model_name}</option>`); }
     function onFormChange() { renderFilterDropdowns(); } function onSolutionFilterChange() { updateModelFilterDropdown(); } function onVendorFilterChange() { updateModelFilterDropdown(); }
     function resetFilters() { ['filter-block-type','filter-form','filter-purpose','filter-solution','filter-vendor','filter-model','filter-keyword'].forEach(id => document.getElementById(id).value = ''); renderFilterDropdowns(); document.getElementById('list-results').innerHTML = ''; document.getElementById('count-results').textContent = '0 kết quả'; }
 
@@ -268,15 +286,19 @@
       const params = new URLSearchParams({ block_type: pType, project_form: pForm, purpose_id: pPurp, solution_id: pSol, vendor_id: pVen, model_id: pMod, keyword: pKey });
       try {
         currentBlocks = await apiFetch('/api/content-blocks?' + params.toString());
-        let logDetails = []; if(pType) logDetails.push(`Phân loại: ${pType}`); if(pForm) logDetails.push(`Hình thức: ${pForm}`); if(pSol) logDetails.push(`Giải pháp ID: ${pSol}`); if(pVen) logDetails.push(`Hãng ID: ${pVen}`); if(pKey) logDetails.push(`Từ khóa: "${pKey}"`);
+        let logDetails = []; if(pType) logDetails.push(`Phân loại: ${pType}`); if(pForm) logDetails.push(`Hình thức: ${pForm}`); if(pSol) logDetails.push(`Giải pháp ID: ${pSol}`); if(pKey) logDetails.push(`Từ khóa: "${pKey}"`);
         if(logDetails.length > 0) apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'SEARCH', details: logDetails.join(', ') }) }).catch(e=>console.log("Log error"));
+
         document.getElementById('count-results').textContent = currentBlocks.length + ' kết quả';
         const render = (blocks) => blocks.length ? blocks.map(renderBlockCard).join('') : `<p class="text-sm text-slate-500 italic p-6 text-center border border-dashed border-gray-700 rounded-lg">Không tìm thấy tài liệu thuyết minh nào khớp với bộ lọc của bạn.</p>`;
-        document.getElementById('list-results').innerHTML = render(currentBlocks); 
+        document.getElementById('list-results').innerHTML = render(currentBlocks);
       } catch(err) { showToast("Lỗi khi lọc: " + err.message); }
     }
 
-    function toggleBlock(id) { const body = document.getElementById('block-body-' + id); const card = document.getElementById('block-card-' + id); if(body.classList.contains('expanded')) { body.classList.remove('expanded'); card.classList.remove('expanded'); } else { body.classList.add('expanded'); card.classList.add('expanded'); } }
+    function toggleBlock(id) {
+      const body = document.getElementById('block-body-' + id); const card = document.getElementById('block-card-' + id);
+      if(body.classList.contains('expanded')) { body.classList.remove('expanded'); card.classList.remove('expanded'); } else { body.classList.add('expanded'); card.classList.add('expanded'); }
+    }
 
     function renderBlockCard(b) {
       const pTags = (b.purposes || []).map(p => `<span class="px-2 py-0.5 rounded bg-gray-800 border border-gray-700 text-[10px] text-slate-300">${p.name}</span>`).join('');
@@ -287,7 +309,8 @@
       return `
         <div id="block-card-${b.id}" class="border border-gray-700 rounded-xl px-5 py-4 hover:border-blue-500/50 transition bg-gray-850 cursor-pointer" onclick="toggleBlock(${b.id})">
           <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3 flex-1"><input type="checkbox" onclick="event.stopPropagation()" class="export-checkbox w-4 h-4 rounded bg-gray-800 border-gray-600 checked:bg-blue-600" value="${b.id}" checked />
+            <div class="flex items-center gap-3 flex-1">
+              <input type="checkbox" onclick="event.stopPropagation()" class="export-checkbox w-4 h-4 rounded bg-gray-800 border-gray-600 checked:bg-blue-600" value="${b.id}" checked />
               <div class="flex-1"><h4 class="font-bold text-white text-[15px] leading-snug hover:text-blue-400 transition flex items-start gap-2"><svg class="toggle-icon w-4 h-4 text-slate-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>${b.title}</h4>
                 <div class="flex flex-wrap gap-1.5 mt-2">${typeBadge}<span class="text-[10px] font-semibold bg-purple-900/30 text-purple-300 px-2 py-0.5 rounded border border-purple-800">${b.solution_name}</span><span class="text-[10px] font-semibold bg-emerald-900/30 text-emerald-300 px-2 py-0.5 rounded border border-emerald-800">${b.vendor_name}</span>${mTags}${pTags}</div>
               </div>
@@ -309,23 +332,21 @@
     async function copyRichTextToWord(id, btn) {
       const b = currentBlocks.find(x => x.id === id); if (!b) return;
       apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'COPY', details: `Copy ID [${b.id}] - ${b.title}` }) }).catch(e=>console.log("Log error"));
-      const html = formatHtmlForMsWord(b.html_content); const text = document.getElementById('block-content-'+id).innerText;
       try {
-        await navigator.clipboard.write([ new ClipboardItem({ 'text/html': new Blob([html],{type:'text/html'}), 'text/plain': new Blob([text],{type:'text/plain'}) }) ]);
+        await navigator.clipboard.write([ new ClipboardItem({ 'text/html': new Blob([formatHtmlForMsWord(b.html_content)],{type:'text/html'}), 'text/plain': new Blob([document.getElementById('block-content-'+id).innerText],{type:'text/plain'}) }) ]);
         const ori = btn.textContent; btn.textContent = '✓ Đã Copy!'; btn.classList.replace('bg-blue-600', 'bg-emerald-600'); showToast('Đã copy dữ liệu chuẩn format MS Word!');
         setTimeout(() => { btn.textContent = ori; btn.classList.replace('bg-emerald-600', 'bg-blue-600'); }, 2000);
       } catch (err) { showToast('Lỗi: Trình duyệt không hỗ trợ Clipboard API.'); }
     }
 
     function exportSelectedToWord() {
-      const cIds = Array.from(document.querySelectorAll('.export-checkbox:checked')).map(cb => Number(cb.value)); const sBlocks = currentBlocks.filter(b => cIds.includes(b.id)); if (!sBlocks.length) return showToast('Vui lòng chọn ít nhất 1 mục để xuất Word!');
+      const cIds = Array.from(document.querySelectorAll('.export-checkbox:checked')).map(cb => Number(cb.value)); const sBlocks = currentBlocks.filter(b => cIds.includes(b.id));
+      if (!sBlocks.length) return showToast('Vui lòng chọn ít nhất 1 mục để xuất Word!');
       apiFetch('/api/logs', { method: 'POST', body: JSON.stringify({ action: 'COPY', details: `Xuất file Word gồm ${sBlocks.length} mục` }) }).catch(e=>console.log("Log error"));
-      const bodyHtml = sBlocks.map(b => formatHtmlForMsWord(b.html_content)).join('<br/><br/>');
-      const doc = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family: 'Times New Roman', serif; font-size: 13pt; color: #000000; background: #ffffff;">${bodyHtml}</body></html>`;
+      const doc = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family: 'Times New Roman', serif; font-size: 13pt; color: #000000; background: #ffffff;">${sBlocks.map(b => formatHtmlForMsWord(b.html_content)).join('<br/><br/>')}</body></html>`;
       const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob(['\ufeff', doc], {type: 'application/msword'})); link.download = 'Thuyet_Minh_Giai_Phap.doc'; link.click(); showToast('Đã tải xuống file Thuyet_Minh_Giai_Phap.doc');
     }
 
-    // --- EDITOR ---
     function renderEditorDropdowns() {
       const sSel = document.getElementById('edit-solution'); const nMs = document.getElementById('new-model-solution'); sSel.innerHTML = nMs.innerHTML = ''; masterData.solutions.forEach(s => { sSel.innerHTML += `<option value="${s.id}">${s.name}</option>`; nMs.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
       const vSel = document.getElementById('edit-vendor'); const nMv = document.getElementById('new-model-vendor'); vSel.innerHTML = nMv.innerHTML = ''; masterData.vendors.forEach(v => { vSel.innerHTML += `<option value="${v.id}">${v.name}</option>`; if(!v.is_general) nMv.innerHTML += `<option value="${v.id}">${v.name}</option>`; });
@@ -340,14 +361,18 @@
     }
 
     function onEditorTypeChange() { if(document.getElementById('edit-block-type').value === 'GENERAL_TECH') { const gV = masterData.vendors.find(v => v.is_general); if(gV) document.getElementById('edit-vendor').value = gV.id; } renderEditorModels(); }
-    function execCmd(c,v=null){ document.execCommand(c,false,v); } function insertSampleSpecTable(){ document.execCommand('insertHTML',false,`<table><thead><tr><th>STT</th><th>Thông số</th><th>Yêu cầu</th></tr></thead><tbody><tr><td>1</td><td>Hiệu năng</td><td>...</td></tr></tbody></table><p></p>`); }
+    function execCmd(c,v=null){ document.execCommand(c,false,v); }
+    function insertSampleSpecTable(){ document.execCommand('insertHTML',false,`<table><thead><tr><th>STT</th><th>Thông số</th><th>Yêu cầu</th></tr></thead><tbody><tr><td>1</td><td>Hiệu năng</td><td>...</td></tr></tbody></table><p></p>`); }
     async function uploadImageToEditor(inp) { if(!inp.files||!inp.files[0]) return; const fd = new FormData(); fd.append('image', inp.files[0]); try { const d = await apiFetch('/api/upload', {method:'POST', body:fd}); document.execCommand('insertHTML',false,`<p><img src="${d.url}" style="max-width:100%;" /></p>`); showToast('Đã chèn ảnh!'); } catch(e) { showToast(e.message); } }
     function resetEditorForm() { document.getElementById('edit-block-id').value = ''; document.getElementById('editor-form-title').textContent = 'Thêm mới Khối nội dung'; document.getElementById('edit-title').value = ''; document.getElementById('rich-editor').innerHTML = '<h3>1. Tiêu đề</h3><p>Nội dung...</p>'; }
     
     function openEditBlock(id) {
       const b = currentBlocks.find(x => x.id === id); if(!b) return; switchTab('editor');
-      document.getElementById('edit-block-id').value = b.id; document.getElementById('editor-form-title').textContent = 'Cập nhật #' + b.id; document.getElementById('edit-title').value = b.title; document.getElementById('edit-block-type').value = b.block_type; document.getElementById('edit-solution').value = b.solution_id; if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
-      const pIds = (b.purposes||[]).map(p=>p.id); document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value))); renderEditorModels((b.models||[]).map(m=>m.id)); document.getElementById('rich-editor').innerHTML = b.html_content;
+      document.getElementById('edit-block-id').value = b.id; document.getElementById('editor-form-title').textContent = 'Cập nhật #' + b.id;
+      document.getElementById('edit-title').value = b.title; document.getElementById('edit-block-type').value = b.block_type;
+      document.getElementById('edit-solution').value = b.solution_id; if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
+      const pIds = (b.purposes||[]).map(p=>p.id); document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
+      renderEditorModels((b.models||[]).map(m=>m.id)); document.getElementById('rich-editor').innerHTML = b.html_content;
     }
 
     async function saveContentBlock() {
@@ -356,13 +381,11 @@
       if(!p.title || !p.purpose_ids.length) return showToast('Nhập Tiêu đề và Mục đích!');
       try { if (id) await apiFetch('/api/content-blocks/'+id, {method:'PUT', body:JSON.stringify(p)}); else await apiFetch('/api/content-blocks', {method:'POST', body:JSON.stringify(p)}); showToast('Lưu thành công!'); resetEditorForm(); switchTab('search'); loadContentBlocks(); } catch(e) { showToast(e.message); }
     }
-    
     async function deleteBlock(id) { if(!confirm('Bạn có chắc muốn xóa VĨNH VIỄN khối nội dung thuyết minh này?')) return; await apiFetch('/api/content-blocks/'+id, {method:'DELETE'}); showToast('Đã xóa!'); loadContentBlocks(); }
 
-    // --- MASTER DATA & LOGS (ADMIN ONLY) ---
-    async function deleteSolution(id) { if(!confirm('Bạn có chắc muốn xóa Giải pháp này? Việc này sẽ thất bại nếu giải pháp đang được dùng trong các bài thuyết minh.')) return; try { await apiFetch('/api/solutions/'+id, {method:'DELETE'}); showToast('Đã xóa Giải pháp!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
-    async function deleteVendor(id) { if(!confirm('Bạn có chắc muốn xóa Hãng này? Việc này sẽ thất bại nếu hãng đang được dùng trong các bài thuyết minh.')) return; try { await apiFetch('/api/vendors/'+id, {method:'DELETE'}); showToast('Đã xóa Hãng!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
-    async function deleteModel(id) { if(!confirm('Bạn có chắc muốn xóa Model này? Việc này sẽ thất bại nếu model đang được gắn vào bài thuyết minh.')) return; try { await apiFetch('/api/models/'+id, {method:'DELETE'}); showToast('Đã xóa Model!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
+    async function deleteSolution(id) { if(!confirm('Xóa Giải pháp này?')) return; try { await apiFetch('/api/solutions/'+id, {method:'DELETE'}); showToast('Đã xóa Giải pháp!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
+    async function deleteVendor(id) { if(!confirm('Xóa Hãng này?')) return; try { await apiFetch('/api/vendors/'+id, {method:'DELETE'}); showToast('Đã xóa Hãng!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
+    async function deleteModel(id) { if(!confirm('Xóa Model này?')) return; try { await apiFetch('/api/models/'+id, {method:'DELETE'}); showToast('Đã xóa Model!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
 
     function renderMasterLists() {
       if (currentUser.role !== 'ADMIN') return;
@@ -399,11 +422,42 @@
       if(!username||!password||!full_name) return showToast('Nhập đủ thông tin!'); await apiFetch('/api/users', {method:'POST', body:JSON.stringify({username,password,full_name,role})}); showToast('Đã tạo User!'); loadUsers();
     }
 
-    // --- ĐỔI MẬT KHẨU ---
+    // BACKUP & RESTORE
+    function downloadBackup() {
+      if(!confirm('Hệ thống sẽ tạo bản sao lưu và tự động tải xuống. Tiếp tục?')) return;
+      window.location.href = `/api/backup?token=${authToken}`;
+    }
+
+    async function restoreBackup() {
+      const fileInput = document.getElementById('restore-file-input');
+      if(!fileInput.files.length) return showToast('Vui lòng chọn file .sql để phục hồi!');
+      if(!confirm('CẢNH BÁO NGUY HIỂM: Toàn bộ dữ liệu hiện tại sẽ bị xóa sạch và ghi đè bằng dữ liệu từ file backup. Bạn chắc chắn chứ?')) return;
+
+      const fd = new FormData();
+      fd.append('backup_file', fileInput.files[0]);
+      
+      showToast('Đang phục hồi dữ liệu, vui lòng không đóng trang...');
+      try {
+        await apiFetch('/api/restore', { method: 'POST', body: fd });
+        showToast('Phục hồi thành công! Hệ thống sẽ tự động tải lại...');
+        setTimeout(() => window.location.reload(), 2500);
+      } catch (err) {
+        showToast('Lỗi: ' + err.message);
+      }
+    }
+
     async function submitChangePassword() {
       const old_password = document.getElementById('cp-old').value; const new_password = document.getElementById('cp-new').value; const confirm_password = document.getElementById('cp-confirm').value;
-      if (!old_password || !new_password || !confirm_password) return showToast('Vui lòng nhập đầy đủ thông tin!'); if (new_password !== confirm_password) return showToast('Mật khẩu mới không khớp!'); if (new_password.length < 6) return showToast('Mật khẩu mới phải từ 6 ký tự trở lên!');
-      try { await apiFetch('/api/users/change-password', { method: 'PATCH', body: JSON.stringify({ old_password, new_password }) }); showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'); document.getElementById('change-password-modal').classList.add('hidden'); setTimeout(logout, 2000); } catch (e) { showToast(e.message); }
+      if (!old_password || !new_password || !confirm_password) return showToast('Vui lòng nhập đầy đủ thông tin!');
+      if (new_password !== confirm_password) return showToast('Mật khẩu mới không khớp!');
+      if (new_password.length < 6) return showToast('Mật khẩu mới phải từ 6 ký tự trở lên!');
+
+      try {
+        await apiFetch('/api/users/change-password', { method: 'PATCH', body: JSON.stringify({ old_password, new_password }) });
+        showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
+        document.getElementById('change-password-modal').classList.add('hidden');
+        setTimeout(logout, 2000);
+      } catch (e) { showToast(e.message); }
     }
 
     async function fetchAuditLogs() {
@@ -413,7 +467,6 @@
       } catch(e) { showToast(e.message); }
     }
 
-    // --- TAB SWITCH ---
     function switchTab(t) {
       ['search','editor','master','logs'].forEach(x => { document.getElementById('tab-'+x).classList.add('hidden'); const b = document.getElementById('tab-btn-'+x); if(b) b.className = b.className.replace('bg-gray-700 text-white shadow', 'text-slate-400 hover:text-white hover:bg-gray-700'); });
       document.getElementById('tab-'+t).classList.remove('hidden'); const act = document.getElementById('tab-btn-'+t); if(act) act.className = act.className.replace('text-slate-400 hover:text-white hover:bg-gray-700', 'bg-gray-700 text-white shadow');

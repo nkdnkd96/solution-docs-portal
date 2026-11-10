@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
+const { exec } = require('child_process');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,11 +28,20 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage });
+const backupUpload = multer({ dest: path.join(__dirname, 'tmp') });
 
+// Middleware xác thực JWT (Hỗ trợ đọc token từ Header hoặc Query String cho việc download backup)
 function authenticateToken(req, res, next) {
+  let token = null;
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  if (authHeader) {
+    token = authHeader.split(' ')[1];
+  } else if (req.query.token) {
+    token = req.query.token;
+  }
+
   if (!token) return res.status(401).json({ error: 'Vui lòng đăng nhập để tiếp tục' });
+  
   jwt.verify(token, JWT_SECRET, (err, user) => {
     if (err) return res.status(403).json({ error: 'Phiên đăng nhập hết hạn' });
     req.user = user;
@@ -91,16 +102,12 @@ app.patch('/api/users/:id/toggle', authenticateToken, requireAdmin, async (req, 
   }
 });
 
-
-// ------------------------------------------
-// 1.5 ĐỔI MẬT KHẨU (CHANGE PASSWORD)
-// ------------------------------------------
+// Đổi mật khẩu
 app.patch('/api/users/change-password', authenticateToken, async (req, res) => {
   try {
     const { old_password, new_password } = req.body;
     const userId = req.user.id;
 
-    // Kiểm tra mật khẩu cũ
     const checkResult = await pool.query(
       `SELECT id FROM users WHERE id = $1 AND password_hash = crypt($2, password_hash)`,
       [userId, old_password]
@@ -110,13 +117,11 @@ app.patch('/api/users/change-password', authenticateToken, async (req, res) => {
       return res.status(401).json({ error: 'Mật khẩu cũ không chính xác!' });
     }
 
-    // Cập nhật mật khẩu mới
     await pool.query(
       `UPDATE users SET password_hash = crypt($1, gen_salt('bf')) WHERE id = $2`,
       [new_password, userId]
     );
     
-    // Ghi log
     await pool.query('INSERT INTO audit_logs (user_id, action, details) VALUES ($1, $2, $3)', [userId, 'UPDATE_PROFILE', 'Đổi mật khẩu tài khoản']);
 
     res.json({ success: true });
@@ -126,7 +131,7 @@ app.patch('/api/users/change-password', authenticateToken, async (req, res) => {
 });
 
 // ------------------------------------------
-// 2. MASTER DATA (GET & CREATE & DELETE)
+// 2. MASTER DATA
 // ------------------------------------------
 app.get('/api/master-data', authenticateToken, async (req, res) => {
   try {
@@ -164,7 +169,6 @@ app.post('/api/models', authenticateToken, requireAdmin, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
-// XÓA DANH MỤC (ADMIN)
 app.delete('/api/solutions/:id', authenticateToken, requireAdmin, async (req, res) => {
   try {
     await pool.query('DELETE FROM solutions WHERE id = $1', [req.params.id]);
@@ -327,7 +331,47 @@ app.post('/api/upload', authenticateToken, requireAdmin, upload.single('image'),
 });
 
 // ------------------------------------------
-// 4. AUDIT LOGS
+// 4. BACKUP & RESTORE DỮ LIỆU
+// ------------------------------------------
+app.get('/api/backup', authenticateToken, requireAdmin, (req, res) => {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const fileName = `solution_docs_backup_${timestamp}.sql`;
+  const filePath = path.join(__dirname, 'tmp', fileName);
+
+  const cmd = `pg_dump "${process.env.DATABASE_URL}" --clean --if-exists -O -x -f "${filePath}"`;
+
+  exec(cmd, (error, stdout, stderr) => {
+    if (error) {
+      console.error('Backup error:', stderr);
+      return res.status(500).json({ error: 'Lỗi khi tạo file backup CSDL' });
+    }
+    res.download(filePath, fileName, (err) => {
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    });
+  });
+});
+
+app.post('/api/restore', authenticateToken, requireAdmin, backupUpload.single('backup_file'), (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'Không có file backup được tải lên' });
+
+  const filePath = req.file.path;
+  const cmd = `psql "${process.env.DATABASE_URL}" -f "${filePath}"`;
+
+  exec(cmd, (error, stdout, stderr) => {
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+
+    if (error) {
+      console.error('Restore error:', stderr);
+      return res.status(500).json({ error: 'Phục hồi thất bại. File backup không hợp lệ hoặc lỗi CSDL.' });
+    }
+
+    pool.query('INSERT INTO audit_logs (user_id, action, details) VALUES ($1, $2, $3)', [req.user.id, 'RESTORE', 'Phục hồi toàn bộ CSDL từ file backup']).catch(() => {});
+    res.json({ success: true, message: 'Phục hồi dữ liệu thành công!' });
+  });
+});
+
+// ------------------------------------------
+// 5. AUDIT LOGS
 // ------------------------------------------
 app.post('/api/logs', authenticateToken, async (req, res) => {
   try {
