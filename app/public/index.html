@@ -171,7 +171,7 @@
         <div class="flex-1 flex flex-col">
           <div class="flex items-center justify-between mb-1.5">
             <label class="text-xs font-semibold text-slate-400">Nội dung thuyết minh (Hỗ trợ dán ảnh trực tiếp bằng <code class="text-blue-400">Ctrl+V</code> hoặc kéo thả ảnh vào khung) *</label>
-            <button type="button" onclick="toggleSourceCode()" id="btn-source-code" class="text-xs px-2.5 py-1 rounded bg-gray-800 border border-gray-700 text-amber-400 hover:bg-gray-700 font-mono transition">&lt;/&gt; Xem mã HTML</button>
+            <button type="button" onclick="toggleSourceCode()" id="btn-source-code" class="text-xs px-2.5 py-1 rounded bg-gray-800 border border-gray-700 text-amber-400 hover:bg-gray-700 font-mono transition"></> Xem mã HTML</button>
           </div>
 
           <!-- THANH CÔNG CỤ CHÍNH (MAIN TOOLBAR) -->
@@ -497,7 +497,7 @@
       const pTags = (b.purposes || []).map(p => `<span class="px-2 py-0.5 rounded bg-gray-800 border border-gray-700 text-[10px] text-slate-300">${p.name}</span>`).join('');
       const mTags = (b.models || []).map(m => `<span class="px-2 py-0.5 rounded bg-blue-900/30 border border-blue-800 text-[10px] text-blue-300 font-semibold">${m.model_name}</span>`).join('');
       const typeBadge = b.block_type === 'GENERAL_TECH' ? `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">Thuyết minh chung</span>` : `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Thuyết minh chi tiết (có key)</span>`;
-      const adBtns = currentUser.role === 'ADMIN' ? `<button onclick="event.stopPropagation(); openEditBlock(${b.id})" class="text-xs text-slate-400 hover:text-blue-400 px-2.5 py-1.5 border border-gray-700 hover:border-blue-800 rounded bg-gray-800 transition">Sửa</button><button onclick="event.stopPropagation(); deleteBlock(${b.id})" class="text-xs text-slate-400 hover:text-red-400 px-2.5 py-1.5 border border-gray-700 hover:border-red-800 rounded bg-gray-800 transition">Xóa</button>` : '';
+      const adBtns = currentUser.role === 'ADMIN' ? `<button onclick="event.stopPropagation(); cloneBlock(${b.id})" class="text-xs text-slate-400 hover:text-emerald-400 px-2.5 py-1.5 border border-gray-700 hover:border-emerald-800 rounded bg-gray-800 transition" title="Nhân bản thành bản ghi mới">Nhân bản</button><button onclick="event.stopPropagation(); openEditBlock(${b.id})" class="text-xs text-slate-400 hover:text-blue-400 px-2.5 py-1.5 border border-gray-700 hover:border-blue-800 rounded bg-gray-800 transition">Sửa</button><button onclick="event.stopPropagation(); deleteBlock(${b.id})" class="text-xs text-slate-400 hover:text-red-400 px-2.5 py-1.5 border border-gray-700 hover:border-red-800 rounded bg-gray-800 transition">Xóa</button>` : '';
 
       return `
         <div id="block-card-${b.id}" class="border border-gray-700 rounded-xl px-5 py-4 hover:border-blue-500/50 transition bg-gray-850 cursor-pointer" onclick="toggleBlock(${b.id})">
@@ -867,6 +867,29 @@
       renderEditorModels((b.models||[]).map(m=>m.id));
       document.getElementById('rich-editor').innerHTML = b.html_content;
       document.getElementById('html-source-editor').value = b.html_content;
+    }
+
+    function cloneBlock(id) {
+      const b = currentBlocks.find(x => x.id === id); if(!b) return; switchTab('editor');
+      document.getElementById('edit-block-id').value = ''; // Để rỗng ID để tạo mới
+      document.getElementById('editor-form-title').textContent = 'Nhân bản dữ liệu';
+      document.getElementById('edit-title').value = b.title + ' (Bản sao)';
+      document.getElementById('edit-block-type').value = b.block_type;
+      document.getElementById('edit-solution').value = b.solution_id;
+      if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
+      
+      const pIds = (b.purposes||[]).map(p=>p.id);
+      document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
+      renderEditorModels((b.models||[]).map(m=>m.id));
+      
+      document.getElementById('rich-editor').innerHTML = b.html_content;
+      document.getElementById('html-source-editor').value = b.html_content;
+      
+      // Mở rộng thông tin chung nếu đang bị thu gọn
+      const panel = document.getElementById('editor-metadata-panel');
+      if (panel && panel.classList.contains('hidden')) toggleMetadataPanel();
+      
+      showToast('Đã tải dữ liệu nhân bản. Hãy chỉnh sửa (VD: đổi Model) và bấm Lưu để tạo mới!');
     }
 
     async function saveContentBlock() {
