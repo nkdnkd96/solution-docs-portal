@@ -101,7 +101,28 @@ app.patch('/api/users/:id/toggle', authenticateToken, requireAdmin, async (req, 
     res.status(500).json({ error: err.message }); 
   }
 });
+//Đổi quyền
+app.patch('/api/users/:id/role', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { role } = req.body;
+    if (!['ADMIN', 'VIEWER'].includes(role)) {
+      return res.status(400).json({ error: 'Quyền không hợp lệ!' });
+    }
+    
+    // Ngăn chặn admin tự hạ quyền của chính mình (tránh việc không ai quản trị hệ thống)
+    if (Number(req.params.id) === req.user.id) {
+      return res.status(400).json({ error: 'Không thể tự thay đổi quyền của chính mình!' });
+    }
 
+    const result = await pool.query(
+      'UPDATE users SET role = $1 WHERE id = $2 RETURNING id, username, role',
+      [role, req.params.id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) { 
+    res.status(500).json({ error: err.message }); 
+  }
+});
 // Đổi mật khẩu
 app.patch('/api/users/change-password', authenticateToken, async (req, res) => {
   try {
