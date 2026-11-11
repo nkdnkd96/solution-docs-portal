@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Solution Docs Portal - Hệ thống Quản lý Thuyết minh Giải pháp CNTT</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tích hợp thư viện Tom Select để tạo ô tìm kiếm trong Dropdown -->
+  <link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -37,6 +42,15 @@
     .content-body.expanded { max-height: 3000px; opacity: 1; padding-top: 1rem; border-top: 1px solid #374151; margin-top: 0.75rem; }
     .toggle-icon { transition: transform 0.3s ease; }
     .expanded .toggle-icon { transform: rotate(180deg); }
+
+    /* Tùy chỉnh Dark Mode cho ô tìm kiếm (Tom Select) */
+    .ts-control, .ts-wrapper.single.input-active .ts-control { background-color: #1f2937 !important; border-color: #374151 !important; color: #f8fafc !important; border-radius: 0.5rem !important; padding: 0.5rem 0.75rem !important; font-size: 0.875rem !important; box-shadow: none !important; }
+    .ts-control > input { color: #f8fafc !important; }
+    .ts-dropdown { background-color: #1f2937 !important; border-color: #374151 !important; color: #f8fafc !important; border-radius: 0.5rem !important; margin-top: 4px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); font-size: 0.875rem !important; z-index: 60 !important; }
+    .ts-dropdown .option { padding: 8px 12px; }
+    .ts-dropdown .option.active, .ts-dropdown .option:hover { background-color: #3b82f6 !important; color: #ffffff !important; }
+    .ts-wrapper.single .ts-control:after { border-color: #94a3b8 transparent transparent transparent !important; }
+    .ts-dropdown .create { display: none !important; }
   </style>
 </head>
 <body class="bg-gray-950 text-slate-300 min-h-screen font-sans">
@@ -96,13 +110,13 @@
         <div class="bg-gray-900 rounded-xl border border-gray-800 p-5 space-y-4 sticky top-24 shadow-lg">
           <div class="flex items-center justify-between border-b border-gray-800 pb-3"><h2 class="font-bold text-white text-sm uppercase tracking-wider">Bộ lọc dữ liệu</h2><button onclick="resetFilters()" class="text-[11px] text-slate-400 hover:text-white uppercase font-semibold">Đặt lại</button></div>
           <div class="space-y-3.5">
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Phân loại Thuyết minh</label><select id="filter-block-type" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả loại --</option><option value="GENERAL_TECH">Thuyết minh chung</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình thức dự án</label><select id="filter-form" onchange="onFormChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option><option value="DAU_TU">Đầu tư CNTT</option><option value="THUE_DICH_VU">Thuê dịch vụ</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mục đích tài liệu</label><select id="filter-purpose" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Loại giải pháp</label><select id="filter-solution" onchange="onSolutionFilterChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hãng sản xuất</label><select id="filter-vendor" onchange="onVendorFilterChange()" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Model / Phiên bản</label><select id="filter-model" class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none"><option value="">-- Tất cả --</option></select></div>
-            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Từ khóa tìm kiếm</label><input type="text" id="filter-keyword" placeholder="VD: Firewall..." class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none" /></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Phân loại Thuyết minh</label><select id="filter-block-type" class="w-full text-sm outline-none"><option value="">-- Tất cả loại --</option><option value="GENERAL_TECH">Thuyết minh chung</option><option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hình thức dự án</label><select id="filter-form" onchange="onFormChange()" class="w-full text-sm outline-none"><option value="">-- Tất cả --</option><option value="DAU_TU">Đầu tư CNTT</option><option value="THUE_DICH_VU">Thuê dịch vụ</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Mục đích tài liệu</label><select id="filter-purpose" class="w-full text-sm outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Loại giải pháp</label><select id="filter-solution" onchange="onSolutionFilterChange()" class="w-full text-sm outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Hãng sản xuất</label><select id="filter-vendor" onchange="onVendorFilterChange()" class="w-full text-sm outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Model / Phiên bản</label><select id="filter-model" class="w-full text-sm outline-none"><option value="">-- Tất cả --</option></select></div>
+            <div><label class="block text-xs font-semibold text-slate-400 mb-1.5">Từ khóa tìm kiếm</label><input type="text" id="filter-keyword" placeholder="VD: Firewall..." class="w-full text-sm bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2.5 outline-none focus:border-blue-500" /></div>
           </div>
           <div class="pt-3"><button onclick="loadContentBlocks()" class="w-full bg-blue-600 hover:bg-blue-500 text-white text-sm font-bold py-3 rounded-lg shadow transition">LỌC KẾT QUẢ</button></div>
           <div class="pt-4 border-t border-gray-800"><button onclick="exportSelectedToWord()" class="w-full bg-emerald-600/20 text-emerald-400 border border-emerald-800 hover:bg-emerald-600/40 text-sm font-semibold py-2.5 px-3 rounded-lg transition">Xuất nhiều mục ra Word (.doc)</button></div>
@@ -120,7 +134,7 @@
       </section>
     </main>
 
-    <!-- TAB 2: TRÌNH SOẠN THẢO NÂNG CAO (FULL-WIDTH) -->
+    <!-- TAB 2: TRÌNH SOẠN THẢO NÂNG CAO -->
     <main id="tab-editor" class="hidden flex-1 max-w-[1440px] w-full mx-auto px-4 py-6">
       <div id="editor-wrapper" class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-xl space-y-4">
         <div class="flex flex-wrap items-center justify-between border-b border-gray-800 pb-3 gap-2">
@@ -136,7 +150,6 @@
 
         <input type="hidden" id="edit-block-id" value="" />
 
-        <!-- Vùng Metadata (Có thể thu gọn để nhường chỗ cho khung soạn thảo) -->
         <div id="editor-metadata-panel" class="grid grid-cols-1 md:grid-cols-12 gap-4 bg-gray-950/60 p-4 rounded-xl border border-gray-800/80">
           <div class="md:col-span-6">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Tiêu đề (Title) *</label>
@@ -144,157 +157,96 @@
           </div>
           <div class="md:col-span-3">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Phân loại *</label>
-            <select id="edit-block-type" onchange="onEditorTypeChange()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm">
+            <select id="edit-block-type" onchange="onEditorTypeChange()" class="w-full text-sm outline-none">
               <option value="GENERAL_TECH">Thuyết minh chung</option>
               <option value="VENDOR_SPECIFIC">Thuyết minh chi tiết (có key)</option>
             </select>
           </div>
           <div class="md:col-span-3">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Loại giải pháp *</label>
-            <select id="edit-solution" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select>
+            <select id="edit-solution" onchange="renderEditorModels()" class="w-full text-sm outline-none"></select>
           </div>
           <div class="md:col-span-3">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Hãng sản xuất</label>
-            <select id="edit-vendor" onchange="renderEditorModels()" class="w-full bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select>
+            <select id="edit-vendor" onchange="renderEditorModels()" class="w-full text-sm outline-none"></select>
           </div>
           <div class="md:col-span-4">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Gắn với Model thiết bị (Chọn nhiều)</label>
-            <div id="edit-models-container" class="bg-gray-800 border border-gray-700 rounded-lg p-2.5 max-h-24 overflow-y-auto space-y-1 text-xs"></div>
+            <div id="edit-models-container" class="bg-gray-800 border border-gray-700 rounded-lg p-2.5 max-h-24 overflow-y-auto space-y-1 text-xs text-slate-300"></div>
           </div>
           <div class="md:col-span-5">
             <label class="block text-xs font-semibold text-slate-400 mb-1">Mục đích sử dụng tài liệu (Chọn nhiều) *</label>
-            <div id="edit-purposes-container" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-gray-800 border border-gray-700 rounded-lg p-2.5 max-h-24 overflow-y-auto text-xs"></div>
+            <div id="edit-purposes-container" class="grid grid-cols-1 sm:grid-cols-2 gap-1.5 bg-gray-800 border border-gray-700 rounded-lg p-2.5 max-h-24 overflow-y-auto text-xs text-slate-300"></div>
           </div>
         </div>
 
         <!-- KHU VỰC SOẠN THẢO CHÍNH -->
         <div class="flex-1 flex flex-col">
           <div class="flex items-center justify-between mb-1.5">
-            <label class="text-xs font-semibold text-slate-400">Nội dung thuyết minh (Hỗ trợ dán ảnh trực tiếp bằng <code class="text-blue-400">Ctrl+V</code> hoặc kéo thả ảnh vào khung) *</label>
-            <button type="button" onclick="toggleSourceCode()" id="btn-source-code" class="text-xs px-2.5 py-1 rounded bg-gray-800 border border-gray-700 text-amber-400 hover:bg-gray-700 font-mono transition"></> Xem mã HTML</button>
+            <label class="text-xs font-semibold text-slate-400">Nội dung thuyết minh (Hỗ trợ dán ảnh trực tiếp bằng <code class="text-blue-400">Ctrl+V</code>) *</label>
+            <button type="button" onclick="toggleSourceCode()" id="btn-source-code" class="text-xs px-2.5 py-1 rounded bg-gray-800 border border-gray-700 text-amber-400 hover:bg-gray-700 font-mono transition"></> Xem HTML</button>
           </div>
 
-          <!-- THANH CÔNG CỤ CHÍNH (MAIN TOOLBAR) -->
+          <!-- THANH CÔNG CỤ CHÍNH -->
           <div class="border border-gray-700 rounded-t-xl bg-gray-800 p-2 flex flex-wrap gap-1.5 items-center sticky top-0 z-20 shadow-md">
-            <!-- Undo / Redo -->
-            <button type="button" onclick="execCmd('undo')" title="Hoàn tác (Ctrl+Z)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↶</button>
-            <button type="button" onclick="execCmd('redo')" title="Làm lại (Ctrl+Y)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↷</button>
-
+            <button type="button" onclick="execCmd('undo')" title="Hoàn tác" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↶</button>
+            <button type="button" onclick="execCmd('redo')" title="Làm lại" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↷</button>
             <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
-
-            <!-- Kiểu đoạn văn / Tiêu đề -->
             <select onchange="if(this.value) { execCmd('formatBlock', this.value); this.value=''; }" class="bg-gray-700 text-white text-xs rounded px-2 py-1.5 border border-gray-600 outline-none">
-              <option value="">Kiểu chữ...</option>
-              <option value="H2">Tiêu đề lớn (H2)</option>
-              <option value="H3">Tiêu đề mục (H3)</option>
-              <option value="H4">Tiêu đề phụ (H4)</option>
-              <option value="P">Đoạn văn thường (P)</option>
+              <option value="">Kiểu chữ...</option><option value="H2">Tiêu đề (H2)</option><option value="H3">Tiêu đề (H3)</option><option value="H4">Tiêu đề (H4)</option><option value="P">Đoạn văn (P)</option>
             </select>
-
-            <!-- Cỡ chữ -->
-            <select onchange="if(this.value) { execCmd('fontSize', this.value); this.value=''; }" class="bg-gray-700 text-white text-xs rounded px-2 py-1.5 border border-gray-600 outline-none">
-              <option value="">Cỡ chữ...</option>
-              <option value="2">Nhỏ (10pt)</option>
-              <option value="3">Thường (13pt)</option>
-              <option value="4">Vừa (14pt)</option>
-              <option value="5">Lớn (18pt)</option>
-              <option value="6">Rất lớn (24pt)</option>
-            </select>
-
             <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
-
-            <!-- Định dạng cơ bản -->
-            <button type="button" onclick="execCmd('bold')" title="In đậm (Ctrl+B)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-bold">B</button>
-            <button type="button" onclick="execCmd('italic')" title="In nghiêng (Ctrl+I)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs italic">I</button>
-            <button type="button" onclick="execCmd('underline')" title="Gạch chân (Ctrl+U)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs underline">U</button>
-            <button type="button" onclick="execCmd('strikeThrough')" title="Gạch ngang chữ" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs line-through">S</button>
-            <button type="button" onclick="execCmd('removeFormat')" title="Xóa định dạng rác" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-rose-300 rounded text-xs">Tx</button>
-
-            <!-- Màu chữ & Tô sáng -->
-            <label title="Màu chữ" class="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs cursor-pointer text-white">
-              <span>A</span>
-              <input type="color" value="#60a5fa" onchange="execCmd('foreColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
-            </label>
-            <label title="Màu nền chữ (Highlight)" class="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs cursor-pointer text-amber-300">
-              <span>🖍</span>
-              <input type="color" value="#fde047" onchange="execCmd('hiliteColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
-            </label>
-
+            <button type="button" onclick="execCmd('bold')" title="Đậm" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-bold">B</button>
+            <button type="button" onclick="execCmd('italic')" title="Nghiêng" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs italic">I</button>
+            <button type="button" onclick="execCmd('underline')" title="Gạch chân" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs underline">U</button>
+            <button type="button" onclick="execCmd('removeFormat')" title="Xóa định dạng" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-rose-300 rounded text-xs">Tx</button>
             <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
-
-            <!-- Căn lề & Danh sách -->
-            <button type="button" onclick="execCmd('justifyLeft')" title="Căn trái" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫷</button>
-            <button type="button" onclick="execCmd('justifyCenter')" title="Căn giữa" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫸</button>
-            <button type="button" onclick="execCmd('justifyRight')" title="Căn phải" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫹</button>
-            <button type="button" onclick="execCmd('justifyFull')" title="Căn đều 2 bên" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">☰</button>
-
-            <button type="button" onclick="execCmd('insertUnorderedList')" title="Danh sách dấu chấm" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">• Danh sách</button>
-            <button type="button" onclick="execCmd('insertOrderedList')" title="Danh sách đánh số" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">1. Danh sách</button>
-            <button type="button" onclick="execCmd('indent')" title="Thụt lề vào" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">→|</button>
-            <button type="button" onclick="execCmd('outdent')" title="Thụt lề ra" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">|←</button>
-
+            <button type="button" onclick="execCmd('justifyLeft')" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫷</button>
+            <button type="button" onclick="execCmd('justifyCenter')" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫸</button>
+            <button type="button" onclick="execCmd('insertUnorderedList')" title="Danh sách" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">•</button>
             <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
-
-            <!-- Chèn Bảng & Ảnh -->
-            <button type="button" onclick="openTableModal()" class="px-3 py-1.5 bg-purple-900/50 text-purple-300 hover:bg-purple-800/70 border border-purple-700 rounded text-xs font-semibold transition">+ Chèn Bảng</button>
-            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1.5 bg-blue-900/50 text-blue-300 hover:bg-blue-800/70 border border-blue-700 rounded text-xs font-semibold transition">+ Bảng Thông số Mẫu</button>
-            <label class="px-3 py-1.5 bg-emerald-900/50 text-emerald-300 hover:bg-emerald-800/70 border border-emerald-700 rounded text-xs font-semibold cursor-pointer transition">
-              + Chèn Ảnh
-              <input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" />
+            <button type="button" onclick="openTableModal()" class="px-3 py-1.5 bg-purple-900/50 text-purple-300 border border-purple-700 rounded text-xs font-semibold hover:bg-purple-800/70">+ Chèn Bảng</button>
+            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1.5 bg-blue-900/50 text-blue-300 border border-blue-700 rounded text-xs font-semibold hover:bg-blue-800/70">+ Bảng Mẫu</button>
+            <label class="px-3 py-1.5 bg-emerald-900/50 text-emerald-300 border border-emerald-700 rounded text-xs font-semibold cursor-pointer hover:bg-emerald-800/70">
+              + Chèn Ảnh<input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" />
             </label>
           </div>
 
-          <!-- THANH CÔNG CỤ NGỮ CẢNH: XỬ LÝ BẢNG (Tự động hiện khi đặt chuột vào Bảng) -->
+          <!-- THANH CÔNG CỤ NGỮ CẢNH BẢNG -->
           <div id="table-context-toolbar" class="hidden bg-purple-950/90 border-x border-b border-purple-700/80 px-3 py-2 flex flex-wrap items-center gap-1.5 text-xs">
-            <span class="font-bold text-purple-300 mr-2 flex items-center gap-1">⊞ Công cụ Bảng:</span>
-            <button type="button" onclick="tableAction('addRowAbove')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Dòng trên</button>
-            <button type="button" onclick="tableAction('addRowBelow')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Dòng dưới</button>
-            <button type="button" onclick="tableAction('deleteRow')" class="px-2.5 py-1 bg-rose-900/80 hover:bg-rose-800 text-rose-200 rounded border border-rose-700">- Xóa dòng</button>
+            <span class="font-bold text-purple-300 mr-2">⊞ Bảng:</span>
+            <button type="button" onclick="tableAction('addRowAbove')" class="px-2.5 py-1 bg-purple-900 text-white rounded border border-purple-700">+ Dòng trên</button>
+            <button type="button" onclick="tableAction('addRowBelow')" class="px-2.5 py-1 bg-purple-900 text-white rounded border border-purple-700">+ Dòng dưới</button>
+            <button type="button" onclick="tableAction('deleteRow')" class="px-2.5 py-1 bg-rose-900/80 text-rose-200 rounded border border-rose-700">- Xóa dòng</button>
             <span class="w-px h-4 bg-purple-700 mx-1"></span>
-            <button type="button" onclick="tableAction('addColLeft')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Cột trái</button>
-            <button type="button" onclick="tableAction('addColRight')" class="px-2.5 py-1 bg-purple-900 hover:bg-purple-800 text-white rounded border border-purple-700">+ Cột phải</button>
-            <button type="button" onclick="tableAction('deleteCol')" class="px-2.5 py-1 bg-rose-900/80 hover:bg-rose-800 text-rose-200 rounded border border-rose-700">- Xóa cột</button>
+            <button type="button" onclick="tableAction('addColLeft')" class="px-2.5 py-1 bg-purple-900 text-white rounded border border-purple-700">+ Cột trái</button>
+            <button type="button" onclick="tableAction('addColRight')" class="px-2.5 py-1 bg-purple-900 text-white rounded border border-purple-700">+ Cột phải</button>
+            <button type="button" onclick="tableAction('deleteCol')" class="px-2.5 py-1 bg-rose-900/80 text-rose-200 rounded border border-rose-700">- Xóa cột</button>
             <span class="w-px h-4 bg-purple-700 mx-1"></span>
-            <button type="button" onclick="tableAction('mergeRight')" class="px-2.5 py-1 bg-indigo-900 hover:bg-indigo-800 text-indigo-200 rounded border border-indigo-700">Gộp ô phải →</button>
-            <button type="button" onclick="tableAction('splitCell')" class="px-2.5 py-1 bg-indigo-900 hover:bg-indigo-800 text-indigo-200 rounded border border-indigo-700">Tách ô</button>
-            <select onchange="if(this.value !== '') { tableAction('cellBg', this.value); this.value=''; }" class="bg-purple-900 text-white rounded px-2 py-1 border border-purple-700 outline-none">
-              <option value="">Màu nền ô...</option>
-              <option value="#334155">Xám đậm (Header)</option>
-              <option value="#1e3a8a">Xanh dương đậm</option>
-              <option value="#064e3b">Xanh lá đậm</option>
-              <option value="#78350f">Vàng nâu</option>
-              <option value="transparent">Xóa màu nền</option>
-            </select>
-            <button type="button" onclick="tableAction('deleteTable')" class="ml-auto px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-semibold rounded shadow">🗑 Xóa cả bảng</button>
+            <button type="button" onclick="tableAction('mergeRight')" class="px-2.5 py-1 bg-indigo-900 text-indigo-200 rounded border border-indigo-700">Gộp phải</button>
+            <button type="button" onclick="tableAction('deleteTable')" class="ml-auto px-2.5 py-1 bg-red-600 text-white font-semibold rounded">🗑 Xóa bảng</button>
           </div>
 
-          <!-- THANH CÔNG CỤ NGỮ CẢNH: XỬ LÝ ẢNH (Tự động hiện khi nhấp vào Ảnh) -->
+          <!-- THANH CÔNG CỤ NGỮ CẢNH ẢNH -->
           <div id="image-context-toolbar" class="hidden bg-emerald-950/90 border-x border-b border-emerald-700/80 px-3 py-2 flex flex-wrap items-center gap-2 text-xs">
-            <span class="font-bold text-emerald-300 mr-1">🖼 Công cụ Ảnh:</span>
-            <span class="text-slate-400">Kích thước:</span>
-            <button type="button" onclick="imageAction('resize', '25%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">25%</button>
-            <button type="button" onclick="imageAction('resize', '50%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">50%</button>
-            <button type="button" onclick="imageAction('resize', '75%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">75%</button>
-            <button type="button" onclick="imageAction('resize', '100%')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">100%</button>
-            <button type="button" onclick="imageAction('customSize')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-emerald-200 rounded border border-emerald-700">Nhập px...</button>
+            <span class="font-bold text-emerald-300 mr-1">🖼 Ảnh:</span>
+            <button type="button" onclick="imageAction('resize', '25%')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">25%</button>
+            <button type="button" onclick="imageAction('resize', '50%')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">50%</button>
+            <button type="button" onclick="imageAction('resize', '75%')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">75%</button>
+            <button type="button" onclick="imageAction('resize', '100%')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">100%</button>
             <span class="w-px h-4 bg-emerald-700 mx-1"></span>
-            <span class="text-slate-400">Căn lề:</span>
-            <button type="button" onclick="imageAction('align', 'left')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">Trái</button>
-            <button type="button" onclick="imageAction('align', 'center')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">Giữa</button>
-            <button type="button" onclick="imageAction('align', 'right')" class="px-2 py-1 bg-emerald-900 hover:bg-emerald-800 text-white rounded border border-emerald-700">Phải</button>
-            <span class="w-px h-4 bg-emerald-700 mx-1"></span>
-            <button type="button" onclick="imageAction('caption')" class="px-2.5 py-1 bg-blue-900 hover:bg-blue-800 text-blue-200 rounded border border-blue-700">+ Chú thích ảnh</button>
-            <button type="button" onclick="imageAction('delete')" class="ml-auto px-2.5 py-1 bg-red-600 hover:bg-red-500 text-white font-semibold rounded shadow">🗑 Xóa ảnh</button>
+            <button type="button" onclick="imageAction('align', 'left')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">Trái</button>
+            <button type="button" onclick="imageAction('align', 'center')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">Giữa</button>
+            <button type="button" onclick="imageAction('align', 'right')" class="px-2 py-1 bg-emerald-900 text-white rounded border border-emerald-700">Phải</button>
+            <button type="button" onclick="imageAction('delete')" class="ml-auto px-2.5 py-1 bg-red-600 text-white font-semibold rounded">🗑 Xóa ảnh</button>
           </div>
 
-          <!-- Bề mặt soạn thảo WYSIWYG -->
           <div id="rich-editor" contenteditable="true"
             class="editor-surface rich-preview border border-t-0 border-gray-700 rounded-b-xl p-6 bg-gray-950 focus:outline-none focus:border-blue-500 text-slate-100 text-[15px] leading-relaxed">
             <h3>1. Tiêu đề mục thuyết minh</h3>
-            <p>Nhập nội dung thuyết minh, dán trực tiếp ảnh chụp màn hình (Ctrl+V) hoặc chèn bảng thông số kỹ thuật tại đây...</p>
+            <p>Nhập nội dung...</p>
           </div>
 
-          <!-- Khung sửa mã nguồn HTML (Ẩn mặc định) -->
           <textarea id="html-source-editor" class="hidden editor-surface w-full border border-t-0 border-gray-700 rounded-b-xl p-5 bg-gray-950 text-emerald-400 font-mono text-xs focus:outline-none focus:border-amber-500"></textarea>
         </div>
 
@@ -307,27 +259,36 @@
 
     <!-- TAB 3: DANH MỤC, BACKUP & USER (ADMIN) -->
     <main id="tab-master" class="hidden flex-1 max-w-[1440px] w-full mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+      
+      <!-- Hãng sản xuất -->
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
-        <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-blue-500">#</span> Quản lý Hãng sản xuất (Vendor)</h3>
-        <div class="flex gap-2 mb-4"><input id="new-vendor-name" placeholder="Tên hãng..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createVendor()" class="bg-blue-600/20 text-blue-400 border border-blue-800 hover:bg-blue-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
+        <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-blue-500">#</span> Quản lý Hãng (Vendor)</h3>
+        <div class="flex gap-2 mb-4"><input id="new-vendor-name" placeholder="Tên hãng..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /><button onclick="createVendor()" class="bg-blue-600/20 text-blue-400 border border-blue-800 hover:bg-blue-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
+        <input type="text" placeholder="🔍 Tìm kiếm hãng sản xuất..." onkeyup="filterList('vendors-list', this.value)" class="w-full bg-gray-800/40 border border-gray-700 text-slate-300 rounded-lg px-3 py-1.5 text-xs mb-3 outline-none focus:border-blue-500" />
         <div id="vendors-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
 
+      <!-- Loại giải pháp -->
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-purple-500">#</span> Quản lý Loại Giải pháp</h3>
-        <div class="flex gap-2 mb-4"><input id="new-sol-code" placeholder="Mã..." class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><input id="new-sol-name" placeholder="Tên..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createSolution()" class="bg-purple-600/20 text-purple-400 border border-purple-800 hover:bg-purple-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
+        <div class="flex gap-2 mb-4"><input id="new-sol-code" placeholder="Mã..." class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /><input id="new-sol-name" placeholder="Tên..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /><button onclick="createSolution()" class="bg-purple-600/20 text-purple-400 border border-purple-800 hover:bg-purple-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div>
+        <input type="text" placeholder="🔍 Tìm kiếm giải pháp..." onkeyup="filterList('solutions-list', this.value)" class="w-full bg-gray-800/40 border border-gray-700 text-slate-300 rounded-lg px-3 py-1.5 text-xs mb-3 outline-none focus:border-purple-500" />
         <div id="solutions-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
 
+      <!-- Model thiết bị -->
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-amber-500">#</span> Quản lý Model Thiết bị</h3>
-        <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><select id="new-model-solution" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select><select id="new-model-vendor" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"></select></div><div class="flex gap-2"><input id="new-model-name" placeholder="Tên Model..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><button onclick="createModel()" class="bg-amber-600/20 text-amber-400 border border-amber-800 hover:bg-amber-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div></div>
+        <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><select id="new-model-solution" class="bg-gray-800 border border-gray-700 text-white rounded-lg text-sm"></select><select id="new-model-vendor" class="bg-gray-800 border border-gray-700 text-white rounded-lg text-sm"></select></div><div class="flex gap-2"><input id="new-model-name" placeholder="Tên Model..." class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /><button onclick="createModel()" class="bg-amber-600/20 text-amber-400 border border-amber-800 hover:bg-amber-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Thêm</button></div></div>
+        <input type="text" placeholder="🔍 Tìm kiếm Model..." onkeyup="filterList('models-list', this.value)" class="w-full bg-gray-800/40 border border-gray-700 text-slate-300 rounded-lg px-3 py-1.5 text-xs mb-3 outline-none focus:border-amber-500" />
         <div id="models-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
 
+      <!-- Người dùng -->
       <div class="bg-gray-900 rounded-xl border border-gray-800 p-6 shadow-lg flex flex-col h-full">
         <h3 class="font-bold text-white border-b border-gray-800 pb-3 mb-4 flex items-center gap-2"><span class="text-emerald-500">#</span> Tài khoản Người dùng</h3>
-        <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><input id="new-user-username" placeholder="Username" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><input id="new-user-password" type="password" placeholder="Mật khẩu" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /></div><div class="flex gap-2"><input id="new-user-fullname" placeholder="Họ tên" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm" /><select id="new-user-role" class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"><option value="VIEWER">VIEWER</option><option value="ADMIN">ADMIN</option></select><button onclick="createUser()" class="bg-emerald-600/20 text-emerald-400 border border-emerald-800 hover:bg-emerald-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Tạo</button></div></div>
+        <div class="space-y-3 mb-4"><div class="grid grid-cols-2 gap-2"><input id="new-user-username" placeholder="Username" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /><input id="new-user-password" type="password" placeholder="Mật khẩu" class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /></div><div class="flex gap-2"><input id="new-user-fullname" placeholder="Họ tên" class="flex-1 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm outline-none" /><select id="new-user-role" class="w-1/3 bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm"><option value="VIEWER">VIEWER</option><option value="ADMIN">ADMIN</option></select><button onclick="createUser()" class="bg-emerald-600/20 text-emerald-400 border border-emerald-800 hover:bg-emerald-600/40 text-sm font-semibold px-4 py-2 rounded-lg transition">Tạo</button></div></div>
+        <input type="text" placeholder="🔍 Tìm kiếm Tài khoản..." onkeyup="filterList('users-list', this.value)" class="w-full bg-gray-800/40 border border-gray-700 text-slate-300 rounded-lg px-3 py-1.5 text-xs mb-3 outline-none focus:border-emerald-500" />
         <div id="users-list" class="flex-1 space-y-1.5 overflow-y-auto max-h-48 pr-2"></div>
       </div>
 
@@ -418,10 +379,8 @@
     let masterData = { purposes: [], solutions: [], vendors: [], models: [] };
     let currentBlocks = [];
 
-    // Trạng thái của Trình soạn thảo nâng cao
-    let activeTableCell = null;
-    let activeImage = null;
-    let isSourceMode = false;
+    let activeTableCell = null; let activeImage = null; let isSourceMode = false;
+    let tsInstances = {}; // Quản lý Tom Select Instances
 
     function showToast(msg) { document.getElementById('toast-msg').textContent = msg; const t = document.getElementById('toast'); t.classList.remove('hidden'); setTimeout(() => t.classList.add('hidden'), 3500); }
 
@@ -435,6 +394,40 @@
       if (!res.ok) throw new Error(data.error || 'Lỗi hệ thống');
       return data;
     }
+
+    // --- HÀM TIỆN ÍCH CHO TOM SELECT & TÌM KIẾM ---
+    function initStaticSelects() {
+      ['filter-block-type', 'filter-form', 'edit-block-type', 'new-user-role'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !tsInstances[id]) tsInstances[id] = new TomSelect(el, { create: false, placeholder: "Chọn..." });
+      });
+    }
+
+    function setSelectOptions(id, html, val) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (tsInstances[id]) { tsInstances[id].destroy(); delete tsInstances[id]; }
+      el.innerHTML = html;
+      el.value = val || '';
+      tsInstances[id] = new TomSelect(el, { create: false, maxOptions: 1000, placeholder: "Tìm kiếm và Chọn..." });
+    }
+
+    function setFieldValue(id, val) {
+      if (tsInstances[id]) tsInstances[id].setValue(val);
+      else document.getElementById(id).value = val;
+    }
+
+    function filterList(listId, keyword) {
+      const list = document.getElementById(listId);
+      if(!list) return;
+      const items = list.children;
+      const kw = keyword.toLowerCase().trim();
+      for (let i = 0; i < items.length; i++) {
+        const text = items[i].textContent.toLowerCase();
+        items[i].style.display = text.includes(kw) ? '' : 'none';
+      }
+    }
+    // ------------------------------------------------
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
       e.preventDefault(); const errBox = document.getElementById('login-error'); errBox.classList.add('hidden');
@@ -454,25 +447,48 @@
       document.getElementById('user-role-badge').className = currentUser.role === 'ADMIN' ? 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-amber-500/20 text-amber-400' : 'inline-block text-[10px] font-bold px-2 py-0.5 rounded mt-0.5 bg-emerald-500/20 text-emerald-400';
       document.querySelectorAll('.admin-only').forEach(el => currentUser.role === 'ADMIN' ? el.classList.remove('hidden') : el.classList.add('hidden'));
       initRichEditorInteractions();
+      initStaticSelects();
       await loadMasterData(); switchTab('search');
     }
 
     async function loadMasterData() { masterData = await apiFetch('/api/master-data'); renderFilterDropdowns(); renderEditorDropdowns(); renderMasterLists(); }
 
     function renderFilterDropdowns() {
-      const formVal = document.getElementById('filter-form').value; const pSel = document.getElementById('filter-purpose'); const curP = pSel.value;
-      pSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.purposes.filter(p => !formVal || p.project_form === formVal || p.project_form === 'CA_HAI').forEach(p => pSel.innerHTML += `<option value="${p.id}">${p.name}</option>`); pSel.value = curP;
-      const sSel = document.getElementById('filter-solution'); const curS = sSel.value; sSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.solutions.forEach(s => sSel.innerHTML += `<option value="${s.id}">${s.name}</option>`); sSel.value = curS;
-      const vSel = document.getElementById('filter-vendor'); const curV = vSel.value; vSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.vendors.filter(v => !v.is_general).forEach(v => vSel.innerHTML += `<option value="${v.id}">${v.name}</option>`); vSel.value = curV;
+      const formVal = document.getElementById('filter-form').value;
+      const curP = document.getElementById('filter-purpose').value;
+      let pHTML = '<option value="">-- Tất cả --</option>';
+      masterData.purposes.filter(p => !formVal || p.project_form === formVal || p.project_form === 'CA_HAI').forEach(p => pHTML += `<option value="${p.id}">${p.name}</option>`);
+      setSelectOptions('filter-purpose', pHTML, curP);
+
+      const curS = document.getElementById('filter-solution').value;
+      let sHTML = '<option value="">-- Tất cả --</option>';
+      masterData.solutions.forEach(s => sHTML += `<option value="${s.id}">${s.name}</option>`);
+      setSelectOptions('filter-solution', sHTML, curS);
+
+      const curV = document.getElementById('filter-vendor').value;
+      let vHTML = '<option value="">-- Tất cả --</option>';
+      masterData.vendors.filter(v => !v.is_general).forEach(v => vHTML += `<option value="${v.id}">${v.name}</option>`);
+      setSelectOptions('filter-vendor', vHTML, curV);
+
       updateModelFilterDropdown();
     }
     function updateModelFilterDropdown() {
-      const sId = Number(document.getElementById('filter-solution').value); const vId = Number(document.getElementById('filter-vendor').value); const mSel = document.getElementById('filter-model');
-      mSel.innerHTML = '<option value="">-- Tất cả --</option>'; masterData.models.filter(m => (!sId || m.solution_id === sId) && (!vId || m.vendor_id === vId)).forEach(m => mSel.innerHTML += `<option value="${m.id}">${m.vendor_name} - ${m.model_name}</option>`);
+      const sId = Number(document.getElementById('filter-solution').value);
+      const vId = Number(document.getElementById('filter-vendor').value);
+      const curM = document.getElementById('filter-model').value;
+      let mHTML = '<option value="">-- Tất cả --</option>';
+      masterData.models.filter(m => (!sId || m.solution_id === sId) && (!vId || m.vendor_id === vId)).forEach(m => mHTML += `<option value="${m.id}">${m.vendor_name} - ${m.model_name}</option>`);
+      setSelectOptions('filter-model', mHTML, curM);
     }
 
     function onFormChange() { renderFilterDropdowns(); } function onSolutionFilterChange() { updateModelFilterDropdown(); } function onVendorFilterChange() { updateModelFilterDropdown(); }
-    function resetFilters() { ['filter-block-type','filter-form','filter-purpose','filter-solution','filter-vendor','filter-model','filter-keyword'].forEach(id => document.getElementById(id).value = ''); renderFilterDropdowns(); document.getElementById('list-results').innerHTML = ''; document.getElementById('count-results').textContent = '0 kết quả'; }
+    
+    function resetFilters() { 
+      ['filter-block-type','filter-form','filter-purpose','filter-solution','filter-vendor','filter-model'].forEach(id => setFieldValue(id, '')); 
+      document.getElementById('filter-keyword').value = ''; 
+      renderFilterDropdowns(); 
+      document.getElementById('list-results').innerHTML = ''; document.getElementById('count-results').textContent = '0 kết quả'; 
+    }
 
     async function loadContentBlocks() {
       const pType = document.getElementById('filter-block-type').value; const pForm = document.getElementById('filter-form').value; const pPurp = document.getElementById('filter-purpose').value; const pSol = document.getElementById('filter-solution').value; const pVen = document.getElementById('filter-vendor').value; const pMod = document.getElementById('filter-model').value; const pKey = document.getElementById('filter-keyword').value.trim();
@@ -549,52 +565,30 @@
     function initRichEditorInteractions() {
       const editor = document.getElementById('rich-editor');
 
-      // Bắt sự kiện click trong Editor để bật/tắt thanh công cụ Bảng hoặc Ảnh
       editor.addEventListener('click', (e) => {
         clearEditorSelections();
-
-        // 1. Kiểm tra nếu click vào Ảnh
         if (e.target.tagName === 'IMG') {
-          activeImage = e.target;
-          activeImage.classList.add('selected-editor-img');
-          document.getElementById('image-context-toolbar').classList.remove('hidden');
-        } else {
-          document.getElementById('image-context-toolbar').classList.add('hidden');
-        }
+          activeImage = e.target; activeImage.classList.add('selected-editor-img'); document.getElementById('image-context-toolbar').classList.remove('hidden');
+        } else { document.getElementById('image-context-toolbar').classList.add('hidden'); }
 
-        // 2. Kiểm tra nếu click vào Ô trong Bảng (TD / TH)
         const cell = e.target.closest('td, th');
         if (cell && editor.contains(cell)) {
-          activeTableCell = cell;
-          activeTableCell.classList.add('selected-editor-cell');
-          document.getElementById('table-context-toolbar').classList.remove('hidden');
-        } else {
-          document.getElementById('table-context-toolbar').classList.add('hidden');
-        }
+          activeTableCell = cell; activeTableCell.classList.add('selected-editor-cell'); document.getElementById('table-context-toolbar').classList.remove('hidden');
+        } else { document.getElementById('table-context-toolbar').classList.add('hidden'); }
       });
 
-      // Hỗ trợ Ctrl+V dán ảnh trực tiếp từ Clipboard (Snipping Tool, Word, v.v.)
       editor.addEventListener('paste', async (e) => {
         const items = (e.clipboardData || e.originalEvent.clipboardData).items;
         for (let i = 0; i < items.length; i++) {
           if (items[i].type.indexOf('image') !== -1) {
-            e.preventDefault();
-            const file = items[i].getAsFile();
-            await uploadFileAndInsertImage(file);
-            return;
+            e.preventDefault(); const file = items[i].getAsFile(); await uploadFileAndInsertImage(file); return;
           }
         }
       });
-
-      // Hỗ trợ Kéo & Thả (Drag & Drop) file ảnh thẳng vào Editor
       editor.addEventListener('dragover', (e) => { e.preventDefault(); });
       editor.addEventListener('drop', async (e) => {
         if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-          const file = e.dataTransfer.files[0];
-          if (file.type.startsWith('image/')) {
-            e.preventDefault();
-            await uploadFileAndInsertImage(file);
-          }
+          const file = e.dataTransfer.files[0]; if (file.type.startsWith('image/')) { e.preventDefault(); await uploadFileAndInsertImage(file); }
         }
       });
     }
@@ -602,241 +596,71 @@
     function clearEditorSelections() {
       document.querySelectorAll('#rich-editor .selected-editor-img').forEach(el => el.classList.remove('selected-editor-img'));
       document.querySelectorAll('#rich-editor .selected-editor-cell').forEach(el => el.classList.remove('selected-editor-cell'));
-      activeImage = null;
-      activeTableCell = null;
+      activeImage = null; activeTableCell = null;
     }
 
     function toggleMetadataPanel() {
-      const panel = document.getElementById('editor-metadata-panel');
-      const btn = document.getElementById('btn-toggle-meta');
-      if (panel.classList.contains('hidden')) {
-        panel.classList.remove('hidden');
-        btn.textContent = 'Thu gọn thông tin chung ▲';
-      } else {
-        panel.classList.add('hidden');
-        btn.textContent = 'Mở rộng thông tin chung ▼';
-      }
+      const panel = document.getElementById('editor-metadata-panel'); const btn = document.getElementById('btn-toggle-meta');
+      if (panel.classList.contains('hidden')) { panel.classList.remove('hidden'); btn.textContent = 'Thu gọn thông tin chung ▲'; } else { panel.classList.add('hidden'); btn.textContent = 'Mở rộng thông tin chung ▼'; }
     }
 
     function toggleFullscreenEditor() {
-      const wrapper = document.getElementById('editor-wrapper');
-      const btn = document.getElementById('btn-fullscreen');
+      const wrapper = document.getElementById('editor-wrapper'); const btn = document.getElementById('btn-fullscreen');
       wrapper.classList.toggle('editor-fullscreen');
-      if (wrapper.classList.contains('editor-fullscreen')) {
-        btn.textContent = '✕ Thoát Toàn màn hình';
-        document.getElementById('editor-metadata-panel').classList.add('hidden');
-        document.getElementById('btn-toggle-meta').textContent = 'Mở rộng thông tin chung ▼';
-      } else {
-        btn.textContent = '⛶ Toàn màn hình';
-      }
+      if (wrapper.classList.contains('editor-fullscreen')) { btn.textContent = '✕ Thoát Toàn màn hình'; document.getElementById('editor-metadata-panel').classList.add('hidden'); document.getElementById('btn-toggle-meta').textContent = 'Mở rộng thông tin chung ▼'; } else { btn.textContent = '⛶ Toàn màn hình'; }
     }
 
     function toggleSourceCode() {
-      const rich = document.getElementById('rich-editor');
-      const source = document.getElementById('html-source-editor');
-      const btn = document.getElementById('btn-source-code');
+      const rich = document.getElementById('rich-editor'); const source = document.getElementById('html-source-editor'); const btn = document.getElementById('btn-source-code');
       isSourceMode = !isSourceMode;
-      if (isSourceMode) {
-        clearEditorSelections();
-        source.value = rich.innerHTML;
-        rich.classList.add('hidden');
-        source.classList.remove('hidden');
-        btn.classList.replace('text-amber-400', 'text-emerald-400');
-        btn.textContent = '👁 Quay lại Soạn thảo trực quan';
-      } else {
-        rich.innerHTML = source.value;
-        source.classList.add('hidden');
-        rich.classList.remove('hidden');
-        btn.classList.replace('text-emerald-400', 'text-amber-400');
-        btn.textContent = '</> Xem mã HTML';
-      }
+      if (isSourceMode) { clearEditorSelections(); source.value = rich.innerHTML; rich.classList.add('hidden'); source.classList.remove('hidden'); btn.classList.replace('text-amber-400', 'text-emerald-400'); btn.textContent = '👁 Quay lại Soạn thảo trực quan'; } else { rich.innerHTML = source.value; source.classList.add('hidden'); rich.classList.remove('hidden'); btn.classList.replace('text-emerald-400', 'text-amber-400'); btn.textContent = '</> Xem HTML'; }
     }
 
-    function execCmd(c, v = null) {
-      document.getElementById('rich-editor').focus();
-      document.execCommand(c, false, v);
-    }
+    function execCmd(c, v = null) { document.getElementById('rich-editor').focus(); document.execCommand(c, false, v); }
 
-    // --- XỬ LÝ BẢNG (TABLE ACTIONS) ---
-    function openTableModal() {
-      document.getElementById('table-modal').classList.remove('hidden');
-    }
-
+    function openTableModal() { document.getElementById('table-modal').classList.remove('hidden'); }
     function confirmInsertCustomTable() {
-      const rows = Math.max(1, parseInt(document.getElementById('tbl-rows').value) || 3);
-      const cols = Math.max(1, parseInt(document.getElementById('tbl-cols').value) || 3);
-      const hasHeader = document.getElementById('tbl-has-header').checked;
-
+      const rows = Math.max(1, parseInt(document.getElementById('tbl-rows').value) || 3); const cols = Math.max(1, parseInt(document.getElementById('tbl-cols').value) || 3); const hasHeader = document.getElementById('tbl-has-header').checked;
       let html = '<table>';
-      if (hasHeader) {
-        html += '<thead><tr>';
-        for (let c = 0; c < cols; c++) html += `<th>Tiêu đề ${c + 1}</th>`;
-        html += '</tr></thead>';
-      }
+      if (hasHeader) { html += '<thead><tr>'; for (let c = 0; c < cols; c++) html += `<th>Tiêu đề ${c + 1}</th>`; html += '</tr></thead>'; }
       html += '<tbody>';
       const bodyRows = hasHeader ? Math.max(1, rows - 1) : rows;
-      for (let r = 0; r < bodyRows; r++) {
-        html += '<tr>';
-        for (let c = 0; c < cols; c++) html += '<td>Nội dung...</td>';
-        html += '</tr>';
-      }
+      for (let r = 0; r < bodyRows; r++) { html += '<tr>'; for (let c = 0; c < cols; c++) html += '<td>Nội dung...</td>'; html += '</tr>'; }
       html += '</tbody></table><p><br/></p>';
-
-      document.getElementById('table-modal').classList.add('hidden');
-      execCmd('insertHTML', html);
+      document.getElementById('table-modal').classList.add('hidden'); execCmd('insertHTML', html);
     }
-
-    function insertSampleSpecTable() {
-      execCmd('insertHTML', `<table><thead><tr><th style="width:60px;">STT</th><th style="width:30%;">Hạng mục / Thông số</th><th>Yêu cầu kỹ thuật chi tiết</th></tr></thead><tbody><tr><td>1</td><td>Hiệu năng hệ thống</td><td>Đáp ứng tối thiểu...</td></tr><tr><td>2</td><td>Cổng kết nối</td><td>Tích hợp sẵn...</td></tr></tbody></table><p><br/></p>`);
-    }
-
+    function insertSampleSpecTable() { execCmd('insertHTML', `<table><thead><tr><th style="width:60px;">STT</th><th style="width:30%;">Hạng mục / Thông số</th><th>Yêu cầu kỹ thuật chi tiết</th></tr></thead><tbody><tr><td>1</td><td>Hiệu năng hệ thống</td><td>Đáp ứng tối thiểu...</td></tr><tr><td>2</td><td>Cổng kết nối</td><td>Tích hợp sẵn...</td></tr></tbody></table><p><br/></p>`); }
     function tableAction(action, value = null) {
       if (!activeTableCell) return showToast('Vui lòng nhấp chuột vào 1 ô trong bảng trước!');
-      const row = activeTableCell.parentElement;
-      const table = activeTableCell.closest('table');
-      const cellIndex = activeTableCell.cellIndex;
-
-      if (action === 'addRowAbove' || action === 'addRowBelow') {
-        const newRow = document.createElement('tr');
-        const colCount = row.children.length;
-        for (let i = 0; i < colCount; i++) {
-          const td = document.createElement('td');
-          td.innerHTML = 'Nội dung...';
-          newRow.appendChild(td);
-        }
-        if (action === 'addRowAbove') row.parentElement.insertBefore(newRow, row);
-        else row.parentElement.insertBefore(newRow, row.nextSibling);
-      }
-      else if (action === 'deleteRow') {
-        if (table.querySelectorAll('tr').length <= 1) {
-          table.remove();
-          document.getElementById('table-context-toolbar').classList.add('hidden');
-        } else {
-          row.remove();
-        }
-        activeTableCell = null;
-      }
-      else if (action === 'addColLeft' || action === 'addColRight') {
-        table.querySelectorAll('tr').forEach(tr => {
-          const refCell = tr.children[cellIndex] || tr.lastElementChild;
-          const isHeader = refCell && refCell.tagName === 'TH';
-          const newCell = document.createElement(isHeader ? 'th' : 'td');
-          newCell.innerHTML = isHeader ? 'Tiêu đề' : 'Nội dung...';
-          if (action === 'addColLeft') tr.insertBefore(newCell, refCell);
-          else tr.insertBefore(newCell, refCell ? refCell.nextSibling : null);
-        });
-      }
-      else if (action === 'deleteCol') {
-        const totalCols = row.children.length;
-        if (totalCols <= 1) {
-          table.remove();
-          document.getElementById('table-context-toolbar').classList.add('hidden');
-        } else {
-          table.querySelectorAll('tr').forEach(tr => {
-            if (tr.children[cellIndex]) tr.children[cellIndex].remove();
-          });
-        }
-        activeTableCell = null;
-      }
-      else if (action === 'mergeRight') {
-        const nextCell = activeTableCell.nextElementSibling;
-        if (!nextCell) return showToast('Không có ô bên phải để gộp!');
-        const curSpan = parseInt(activeTableCell.getAttribute('colspan') || '1');
-        const nextSpan = parseInt(nextCell.getAttribute('colspan') || '1');
-        activeTableCell.setAttribute('colspan', curSpan + nextSpan);
-        if (nextCell.innerHTML.trim() && nextCell.innerHTML !== 'Nội dung...') {
-          activeTableCell.innerHTML += ' ' + nextCell.innerHTML;
-        }
-        nextCell.remove();
-      }
-      else if (action === 'splitCell') {
-        const curSpan = parseInt(activeTableCell.getAttribute('colspan') || '1');
-        if (curSpan <= 1) return showToast('Ô này chưa được gộp!');
-        activeTableCell.removeAttribute('colspan');
-        for (let i = 1; i < curSpan; i++) {
-          const newCell = document.createElement(activeTableCell.tagName.toLowerCase());
-          newCell.innerHTML = 'Nội dung...';
-          row.insertBefore(newCell, activeTableCell.nextSibling);
-        }
-      }
-      else if (action === 'cellBg') {
-        activeTableCell.style.backgroundColor = value;
-      }
-      else if (action === 'deleteTable') {
-        if (confirm('Xóa toàn bộ bảng này?')) {
-          table.remove();
-          activeTableCell = null;
-          document.getElementById('table-context-toolbar').classList.add('hidden');
-        }
-      }
+      const row = activeTableCell.parentElement; const table = activeTableCell.closest('table'); const cellIndex = activeTableCell.cellIndex;
+      if (action === 'addRowAbove' || action === 'addRowBelow') { const newRow = document.createElement('tr'); const colCount = row.children.length; for (let i = 0; i < colCount; i++) { const td = document.createElement('td'); td.innerHTML = 'Nội dung...'; newRow.appendChild(td); } if (action === 'addRowAbove') row.parentElement.insertBefore(newRow, row); else row.parentElement.insertBefore(newRow, row.nextSibling); }
+      else if (action === 'deleteRow') { if (table.querySelectorAll('tr').length <= 1) { table.remove(); document.getElementById('table-context-toolbar').classList.add('hidden'); } else { row.remove(); } activeTableCell = null; }
+      else if (action === 'addColLeft' || action === 'addColRight') { table.querySelectorAll('tr').forEach(tr => { const refCell = tr.children[cellIndex] || tr.lastElementChild; const isHeader = refCell && refCell.tagName === 'TH'; const newCell = document.createElement(isHeader ? 'th' : 'td'); newCell.innerHTML = isHeader ? 'Tiêu đề' : 'Nội dung...'; if (action === 'addColLeft') tr.insertBefore(newCell, refCell); else tr.insertBefore(newCell, refCell ? refCell.nextSibling : null); }); }
+      else if (action === 'deleteCol') { const totalCols = row.children.length; if (totalCols <= 1) { table.remove(); document.getElementById('table-context-toolbar').classList.add('hidden'); } else { table.querySelectorAll('tr').forEach(tr => { if (tr.children[cellIndex]) tr.children[cellIndex].remove(); }); } activeTableCell = null; }
+      else if (action === 'mergeRight') { const nextCell = activeTableCell.nextElementSibling; if (!nextCell) return showToast('Không có ô bên phải để gộp!'); const curSpan = parseInt(activeTableCell.getAttribute('colspan') || '1'); const nextSpan = parseInt(nextCell.getAttribute('colspan') || '1'); activeTableCell.setAttribute('colspan', curSpan + nextSpan); if (nextCell.innerHTML.trim() && nextCell.innerHTML !== 'Nội dung...') { activeTableCell.innerHTML += ' ' + nextCell.innerHTML; } nextCell.remove(); }
+      else if (action === 'splitCell') { const curSpan = parseInt(activeTableCell.getAttribute('colspan') || '1'); if (curSpan <= 1) return showToast('Ô này chưa được gộp!'); activeTableCell.removeAttribute('colspan'); for (let i = 1; i < curSpan; i++) { const newCell = document.createElement(activeTableCell.tagName.toLowerCase()); newCell.innerHTML = 'Nội dung...'; row.insertBefore(newCell, activeTableCell.nextSibling); } }
+      else if (action === 'deleteTable') { if (confirm('Xóa toàn bộ bảng này?')) { table.remove(); activeTableCell = null; document.getElementById('table-context-toolbar').classList.add('hidden'); } }
     }
 
-    // --- XỬ LÝ HÌNH ẢNH (IMAGE ACTIONS) ---
     async function uploadFileAndInsertImage(file) {
-      const fd = new FormData();
-      fd.append('image', file);
-      showToast('Đang tải ảnh lên máy chủ...');
-      try {
-        const d = await apiFetch('/api/upload', { method: 'POST', body: fd });
-        execCmd('insertHTML', `<p style="text-align:center;"><img src="${d.url}" style="width:75%; max-width:100%; height:auto;" /></p><p><br/></p>`);
-        showToast('Đã chèn ảnh thành công! Nhấp vào ảnh để chỉnh kích thước.');
-      } catch (e) {
-        showToast('Lỗi tải ảnh: ' + e.message);
-      }
+      const fd = new FormData(); fd.append('image', file); showToast('Đang tải ảnh lên máy chủ...');
+      try { const d = await apiFetch('/api/upload', { method: 'POST', body: fd }); execCmd('insertHTML', `<p style="text-align:center;"><img src="${d.url}" style="width:75%; max-width:100%; height:auto;" /></p><p><br/></p>`); showToast('Đã chèn ảnh thành công! Nhấp vào ảnh để chỉnh kích thước.'); } catch (e) { showToast('Lỗi tải ảnh: ' + e.message); }
     }
-
-    async function uploadImageToEditor(inp) {
-      if (!inp.files || !inp.files[0]) return;
-      await uploadFileAndInsertImage(inp.files[0]);
-      inp.value = '';
-    }
-
+    async function uploadImageToEditor(inp) { if (!inp.files || !inp.files[0]) return; await uploadFileAndInsertImage(inp.files[0]); inp.value = ''; }
     function imageAction(action, value = null) {
       if (!activeImage) return showToast('Vui lòng nhấp chọn ảnh trước!');
-      if (action === 'resize') {
-        activeImage.style.width = value;
-        activeImage.removeAttribute('width');
-      }
-      else if (action === 'customSize') {
-        const px = prompt('Nhập chiều rộng ảnh (VD: 500px hoặc 60%):', activeImage.style.width || '500px');
-        if (px) {
-          activeImage.style.width = px.includes('%') || px.includes('px') ? px : px + 'px';
-          if (px.endsWith('px')) activeImage.setAttribute('width', parseInt(px));
-        }
-      }
-      else if (action === 'align') {
-        const parent = activeImage.parentElement;
-        if (parent && ['P', 'DIV'].includes(parent.tagName)) {
-          parent.style.textAlign = value;
-        } else {
-          activeImage.style.display = 'block';
-          activeImage.style.marginLeft = value === 'center' || value === 'right' ? 'auto' : '0';
-          activeImage.style.marginRight = value === 'center' || value === 'left' ? 'auto' : '0';
-        }
-      }
-      else if (action === 'caption') {
-        const capText = prompt('Nhập dòng chú thích dưới ảnh:', 'Hình 1: Sơ đồ kiến trúc tổng thể');
-        if (capText) {
-          const capEl = document.createElement('p');
-          capEl.style.textAlign = 'center';
-          capEl.style.fontStyle = 'italic';
-          capEl.style.fontSize = '13px';
-          capEl.style.color = '#94a3b8';
-          capEl.textContent = capText;
-          const container = activeImage.closest('p, div') || activeImage;
-          container.parentElement.insertBefore(capEl, container.nextSibling);
-        }
-      }
-      else if (action === 'delete') {
-        activeImage.remove();
-        activeImage = null;
-        document.getElementById('image-context-toolbar').classList.add('hidden');
-      }
+      if (action === 'resize') { activeImage.style.width = value; activeImage.removeAttribute('width'); }
+      else if (action === 'align') { const parent = activeImage.parentElement; if (parent && ['P', 'DIV'].includes(parent.tagName)) { parent.style.textAlign = value; } else { activeImage.style.display = 'block'; activeImage.style.marginLeft = value === 'center' || value === 'right' ? 'auto' : '0'; activeImage.style.marginRight = value === 'center' || value === 'left' ? 'auto' : '0'; } }
+      else if (action === 'delete') { activeImage.remove(); activeImage = null; document.getElementById('image-context-toolbar').classList.add('hidden'); }
     }
 
     function renderEditorDropdowns() {
-      const sSel = document.getElementById('edit-solution'); const nMs = document.getElementById('new-model-solution'); sSel.innerHTML = nMs.innerHTML = ''; masterData.solutions.forEach(s => { sSel.innerHTML += `<option value="${s.id}">${s.name}</option>`; nMs.innerHTML += `<option value="${s.id}">${s.name}</option>`; });
-      const vSel = document.getElementById('edit-vendor'); const nMv = document.getElementById('new-model-vendor'); vSel.innerHTML = nMv.innerHTML = ''; masterData.vendors.forEach(v => { vSel.innerHTML += `<option value="${v.id}">${v.name}</option>`; if(!v.is_general) nMv.innerHTML += `<option value="${v.id}">${v.name}</option>`; });
+      const curS = document.getElementById('edit-solution').value; const curV = document.getElementById('edit-vendor').value; const cMs = document.getElementById('new-model-solution').value; const cMv = document.getElementById('new-model-vendor').value;
+      let sHTML = ''; masterData.solutions.forEach(s => sHTML += `<option value="${s.id}">${s.name}</option>`);
+      setSelectOptions('edit-solution', sHTML, curS); setSelectOptions('new-model-solution', sHTML, cMs);
+      let vHTML = ''; let mvHTML = '';
+      masterData.vendors.forEach(v => { vHTML += `<option value="${v.id}">${v.name}</option>`; if(!v.is_general) mvHTML += `<option value="${v.id}">${v.name}</option>`; });
+      setSelectOptions('edit-vendor', vHTML, curV); setSelectOptions('new-model-vendor', mvHTML, cMv);
       const pCont = document.getElementById('edit-purposes-container'); pCont.innerHTML = ''; masterData.purposes.forEach(p => pCont.innerHTML += `<label class="flex items-center gap-2"><input type="checkbox" class="edit-purpose-cb bg-gray-800 border-gray-600 rounded" value="${p.id}" checked /><span>${p.name}</span></label>`);
       renderEditorModels();
     }
@@ -847,7 +671,7 @@
       c.innerHTML = f.length ? f.map(m => `<label class="flex items-center gap-2"><input type="checkbox" class="edit-model-cb rounded bg-gray-800" value="${m.id}" ${sIds.includes(m.id)?'checked':''} /><span>${m.model_name}</span></label>`).join('') : '<p class="text-xs text-slate-500 italic">Không có Model riêng.</p>';
     }
 
-    function onEditorTypeChange() { if(document.getElementById('edit-block-type').value === 'GENERAL_TECH') { const gV = masterData.vendors.find(v => v.is_general); if(gV) document.getElementById('edit-vendor').value = gV.id; } renderEditorModels(); }
+    function onEditorTypeChange() { if(document.getElementById('edit-block-type').value === 'GENERAL_TECH') { const gV = masterData.vendors.find(v => v.is_general); if(gV) setFieldValue('edit-vendor', gV.id); } renderEditorModels(); }
 
     function resetEditorForm() {
       clearEditorSelections();
@@ -861,65 +685,45 @@
     function openEditBlock(id) {
       const b = currentBlocks.find(x => x.id === id); if(!b) return; switchTab('editor');
       document.getElementById('edit-block-id').value = b.id; document.getElementById('editor-form-title').textContent = 'Cập nhật #' + b.id;
-      document.getElementById('edit-title').value = b.title; document.getElementById('edit-block-type').value = b.block_type;
-      document.getElementById('edit-solution').value = b.solution_id; if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
+      document.getElementById('edit-title').value = b.title; 
+      setFieldValue('edit-block-type', b.block_type); setFieldValue('edit-solution', b.solution_id);
+      if(b.vendor_id) setFieldValue('edit-vendor', b.vendor_id);
       const pIds = (b.purposes||[]).map(p=>p.id); document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
       renderEditorModels((b.models||[]).map(m=>m.id));
-      document.getElementById('rich-editor').innerHTML = b.html_content;
-      document.getElementById('html-source-editor').value = b.html_content;
+      document.getElementById('rich-editor').innerHTML = b.html_content; document.getElementById('html-source-editor').value = b.html_content;
     }
 
     function cloneBlock(id) {
       const b = currentBlocks.find(x => x.id === id); if(!b) return; switchTab('editor');
-      document.getElementById('edit-block-id').value = ''; // Để rỗng ID để tạo mới
+      document.getElementById('edit-block-id').value = '';
       document.getElementById('editor-form-title').textContent = 'Nhân bản dữ liệu';
       document.getElementById('edit-title').value = b.title + ' (Bản sao)';
-      document.getElementById('edit-block-type').value = b.block_type;
-      document.getElementById('edit-solution').value = b.solution_id;
-      if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
+      setFieldValue('edit-block-type', b.block_type); setFieldValue('edit-solution', b.solution_id);
+      if(b.vendor_id) setFieldValue('edit-vendor', b.vendor_id);
       
-      const pIds = (b.purposes||[]).map(p=>p.id);
-      document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
+      const pIds = (b.purposes||[]).map(p=>p.id); document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
       renderEditorModels((b.models||[]).map(m=>m.id));
+      document.getElementById('rich-editor').innerHTML = b.html_content; document.getElementById('html-source-editor').value = b.html_content;
       
-      document.getElementById('rich-editor').innerHTML = b.html_content;
-      document.getElementById('html-source-editor').value = b.html_content;
-      
-      // Mở rộng thông tin chung nếu đang bị thu gọn
       const panel = document.getElementById('editor-metadata-panel');
       if (panel && panel.classList.contains('hidden')) toggleMetadataPanel();
-      
       showToast('Đã tải dữ liệu nhân bản. Hãy chỉnh sửa (VD: đổi Model) và bấm Lưu để tạo mới!');
     }
 
     async function saveContentBlock() {
-      clearEditorSelections();
-      if (isSourceMode) {
-        document.getElementById('rich-editor').innerHTML = document.getElementById('html-source-editor').value;
-      }
+      clearEditorSelections(); if (isSourceMode) { document.getElementById('rich-editor').innerHTML = document.getElementById('html-source-editor').value; }
       const id = document.getElementById('edit-block-id').value;
-      const p = {
-        title: document.getElementById('edit-title').value.trim(),
-        block_type: document.getElementById('edit-block-type').value,
-        solution_id: Number(document.getElementById('edit-solution').value),
-        vendor_id: Number(document.getElementById('edit-vendor').value),
-        html_content: document.getElementById('rich-editor').innerHTML,
-        purpose_ids: Array.from(document.querySelectorAll('.edit-purpose-cb:checked')).map(c=>Number(c.value)),
-        model_ids: Array.from(document.querySelectorAll('.edit-model-cb:checked')).map(c=>Number(c.value))
-      };
+      const p = { title: document.getElementById('edit-title').value.trim(), block_type: document.getElementById('edit-block-type').value, solution_id: Number(document.getElementById('edit-solution').value), vendor_id: Number(document.getElementById('edit-vendor').value), html_content: document.getElementById('rich-editor').innerHTML, purpose_ids: Array.from(document.querySelectorAll('.edit-purpose-cb:checked')).map(c=>Number(c.value)), model_ids: Array.from(document.querySelectorAll('.edit-model-cb:checked')).map(c=>Number(c.value)) };
       if(!p.title || !p.purpose_ids.length) return showToast('Vui lòng nhập Tiêu đề và chọn ít nhất 1 Mục đích!');
       try {
-        if (id) await apiFetch('/api/content-blocks/'+id, {method:'PUT', body:JSON.stringify(p)});
-        else await apiFetch('/api/content-blocks', {method:'POST', body:JSON.stringify(p)});
-        showToast('Lưu dữ liệu thành công!');
-        if (document.getElementById('editor-wrapper').classList.contains('editor-fullscreen')) toggleFullscreenEditor();
+        if (id) await apiFetch('/api/content-blocks/'+id, {method:'PUT', body:JSON.stringify(p)}); else await apiFetch('/api/content-blocks', {method:'POST', body:JSON.stringify(p)});
+        showToast('Lưu dữ liệu thành công!'); if (document.getElementById('editor-wrapper').classList.contains('editor-fullscreen')) toggleFullscreenEditor();
         resetEditorForm(); switchTab('search'); loadContentBlocks();
       } catch(e) { showToast(e.message); }
     }
 
     async function deleteBlock(id) { if(!confirm('Bạn có chắc muốn xóa VĨNH VIỄN khối nội dung thuyết minh này?')) return; await apiFetch('/api/content-blocks/'+id, {method:'DELETE'}); showToast('Đã xóa!'); loadContentBlocks(); }
 
-    // --- DANH MỤC, BACKUP & USER ---
     async function deleteSolution(id) { if(!confirm('Xóa Giải pháp này?')) return; try { await apiFetch('/api/solutions/'+id, {method:'DELETE'}); showToast('Đã xóa Giải pháp!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
     async function deleteVendor(id) { if(!confirm('Xóa Hãng này?')) return; try { await apiFetch('/api/vendors/'+id, {method:'DELETE'}); showToast('Đã xóa Hãng!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
     async function deleteModel(id) { if(!confirm('Xóa Model này?')) return; try { await apiFetch('/api/models/'+id, {method:'DELETE'}); showToast('Đã xóa Model!'); await loadMasterData(); } catch(e) { showToast(e.message); } }
@@ -948,45 +752,12 @@
           </div>`).join('');
       } catch(e) {}
     }
-
-    async function toggleUserStatus(id, currentStatus) {
-      const actionText = currentStatus ? 'khóa' : 'mở khóa'; if(!confirm(`Bạn có chắc muốn ${actionText} tài khoản này?`)) return;
-      try { await apiFetch('/api/users/' + id + '/toggle', { method: 'PATCH' }); showToast(`Đã ${actionText} tài khoản thành công!`); loadUsers(); } catch(e) { showToast(e.message); }
-    }
-    
-    async function createUser() {
-      const username = document.getElementById('new-user-username').value.trim(); const password = document.getElementById('new-user-password').value; const full_name = document.getElementById('new-user-fullname').value.trim(); const role = document.getElementById('new-user-role').value;
-      if(!username||!password||!full_name) return showToast('Nhập đủ thông tin!'); await apiFetch('/api/users', {method:'POST', body:JSON.stringify({username,password,full_name,role})}); showToast('Đã tạo User!'); loadUsers();
-    }
-
-    function downloadBackup() {
-      if(!confirm('Hệ thống sẽ tạo bản sao lưu và tự động tải xuống. Tiếp tục?')) return;
-      window.location.href = `/api/backup?token=${authToken}`;
-    }
-
-    async function restoreBackup() {
-      const fileInput = document.getElementById('restore-file-input');
-      if(!fileInput.files.length) return showToast('Vui lòng chọn file .sql để phục hồi!');
-      if(!confirm('CẢNH BÁO NGUY HIỂM: Toàn bộ dữ liệu hiện tại sẽ bị xóa sạch và ghi đè bằng dữ liệu từ file backup. Bạn chắc chắn chứ?')) return;
-      const fd = new FormData(); fd.append('backup_file', fileInput.files[0]);
-      showToast('Đang phục hồi dữ liệu, vui lòng không đóng trang...');
-      try { await apiFetch('/api/restore', { method: 'POST', body: fd }); showToast('Phục hồi thành công! Hệ thống sẽ tự động tải lại...'); setTimeout(() => window.location.reload(), 2500); } catch (err) { showToast('Lỗi: ' + err.message); }
-    }
-
-    async function submitChangePassword() {
-      const old_password = document.getElementById('cp-old').value; const new_password = document.getElementById('cp-new').value; const confirm_password = document.getElementById('cp-confirm').value;
-      if (!old_password || !new_password || !confirm_password) return showToast('Vui lòng nhập đầy đủ thông tin!');
-      if (new_password !== confirm_password) return showToast('Mật khẩu mới không khớp!');
-      if (new_password.length < 6) return showToast('Mật khẩu mới phải từ 6 ký tự trở lên!');
-      try { await apiFetch('/api/users/change-password', { method: 'PATCH', body: JSON.stringify({ old_password, new_password }) }); showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'); document.getElementById('change-password-modal').classList.add('hidden'); setTimeout(logout, 2000); } catch (e) { showToast(e.message); }
-    }
-
-    async function fetchAuditLogs() {
-      try {
-        const logs = await apiFetch('/api/logs');
-        document.getElementById('logs-tbody').innerHTML = logs.map(l => `<tr class="hover:bg-gray-800/50 transition"><td class="px-4 py-2.5 whitespace-nowrap text-[11px] text-slate-400">${new Date(l.created_at).toLocaleString('vi-VN')}</td><td class="px-4 py-2.5 font-medium text-white">${l.username || 'N/A'}</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${l.action === 'SEARCH' ? 'bg-indigo-900/30 text-indigo-400 border border-indigo-800' : 'bg-emerald-900/30 text-emerald-400 border border-emerald-800'}">${l.action}</span></td><td class="px-4 py-2.5 text-xs">${l.details || ''}</td></tr>`).join('');
-      } catch(e) { showToast(e.message); }
-    }
+    async function toggleUserStatus(id, currentStatus) { const actionText = currentStatus ? 'khóa' : 'mở khóa'; if(!confirm(`Bạn có chắc muốn ${actionText} tài khoản này?`)) return; try { await apiFetch('/api/users/' + id + '/toggle', { method: 'PATCH' }); showToast(`Đã ${actionText} tài khoản thành công!`); loadUsers(); } catch(e) { showToast(e.message); } }
+    async function createUser() { const username = document.getElementById('new-user-username').value.trim(); const password = document.getElementById('new-user-password').value; const full_name = document.getElementById('new-user-fullname').value.trim(); const role = document.getElementById('new-user-role').value; if(!username||!password||!full_name) return showToast('Nhập đủ thông tin!'); await apiFetch('/api/users', {method:'POST', body:JSON.stringify({username,password,full_name,role})}); showToast('Đã tạo User!'); loadUsers(); }
+    function downloadBackup() { if(!confirm('Hệ thống sẽ tạo bản sao lưu và tự động tải xuống. Tiếp tục?')) return; window.location.href = `/api/backup?token=${authToken}`; }
+    async function restoreBackup() { const fileInput = document.getElementById('restore-file-input'); if(!fileInput.files.length) return showToast('Vui lòng chọn file .sql để phục hồi!'); if(!confirm('CẢNH BÁO NGUY HIỂM: Toàn bộ dữ liệu hiện tại sẽ bị xóa sạch và ghi đè bằng dữ liệu từ file backup. Bạn chắc chắn chứ?')) return; const fd = new FormData(); fd.append('backup_file', fileInput.files[0]); showToast('Đang phục hồi dữ liệu, vui lòng không đóng trang...'); try { await apiFetch('/api/restore', { method: 'POST', body: fd }); showToast('Phục hồi thành công! Hệ thống sẽ tự động tải lại...'); setTimeout(() => window.location.reload(), 2500); } catch (err) { showToast('Lỗi: ' + err.message); } }
+    async function submitChangePassword() { const old_password = document.getElementById('cp-old').value; const new_password = document.getElementById('cp-new').value; const confirm_password = document.getElementById('cp-confirm').value; if (!old_password || !new_password || !confirm_password) return showToast('Vui lòng nhập đầy đủ thông tin!'); if (new_password !== confirm_password) return showToast('Mật khẩu mới không khớp!'); if (new_password.length < 6) return showToast('Mật khẩu mới phải từ 6 ký tự trở lên!'); try { await apiFetch('/api/users/change-password', { method: 'PATCH', body: JSON.stringify({ old_password, new_password }) }); showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.'); document.getElementById('change-password-modal').classList.add('hidden'); setTimeout(logout, 2000); } catch (e) { showToast(e.message); } }
+    async function fetchAuditLogs() { try { const logs = await apiFetch('/api/logs'); document.getElementById('logs-tbody').innerHTML = logs.map(l => `<tr class="hover:bg-gray-800/50 transition"><td class="px-4 py-2.5 whitespace-nowrap text-[11px] text-slate-400">${new Date(l.created_at).toLocaleString('vi-VN')}</td><td class="px-4 py-2.5 font-medium text-white">${l.username || 'N/A'}</td><td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded text-[10px] font-bold ${l.action === 'SEARCH' ? 'bg-indigo-900/30 text-indigo-400 border border-indigo-800' : 'bg-emerald-900/30 text-emerald-400 border border-emerald-800'}">${l.action}</span></td><td class="px-4 py-2.5 text-xs">${l.details || ''}</td></tr>`).join(''); } catch(e) { showToast(e.message); } }
 
     function switchTab(t) {
       ['search','editor','master','logs'].forEach(x => { document.getElementById('tab-'+x).classList.add('hidden'); const b = document.getElementById('tab-btn-'+x); if(b) b.className = b.className.replace('bg-gray-700 text-white shadow', 'text-slate-400 hover:text-white hover:bg-gray-700'); });
