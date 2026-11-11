@@ -309,6 +309,7 @@
           </div>
         </div>
 
+<<<<<<< HEAD
         <div>
           <label class="block text-xs font-semibold text-slate-400 mb-1">Nội dung HTML (Hỗ trợ chèn bảng) *</label>
           <div class="border border-gray-700 rounded-t-lg bg-gray-800 p-2 flex flex-wrap gap-1.5 items-center">
@@ -319,6 +320,81 @@
             <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1 bg-blue-900/40 text-blue-400 hover:bg-blue-900/60 border border-blue-800 rounded text-xs font-medium transition">+ Bảng mẫu</button>
             <label class="px-3 py-1 bg-emerald-900/40 text-emerald-400 hover:bg-emerald-900/60 border border-emerald-800 rounded text-xs font-medium cursor-pointer transition">
               + Ảnh sơ đồ
+=======
+        <!-- KHU VỰC SOẠN THẢO CHÍNH -->
+        <div class="flex-1 flex flex-col">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-semibold text-slate-400">Nội dung thuyết minh (Hỗ trợ dán ảnh trực tiếp bằng <code class="text-blue-400">Ctrl+V</code> hoặc kéo thả ảnh vào khung) *</label>
+            <button type="button" onclick="toggleSourceCode()" id="btn-source-code" class="text-xs px-2.5 py-1 rounded bg-gray-800 border border-gray-700 text-amber-400 hover:bg-gray-700 font-mono transition">&lt;/&gt; Xem mã HTML</button>
+          </div>
+
+          <!-- THANH CÔNG CỤ CHÍNH (MAIN TOOLBAR) -->
+          <div class="border border-gray-700 rounded-t-xl bg-gray-800 p-2 flex flex-wrap gap-1.5 items-center sticky top-0 z-20 shadow-md">
+            <!-- Undo / Redo -->
+            <button type="button" onclick="execCmd('undo')" title="Hoàn tác (Ctrl+Z)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↶</button>
+            <button type="button" onclick="execCmd('redo')" title="Làm lại (Ctrl+Y)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">↷</button>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Kiểu đoạn văn / Tiêu đề -->
+            <select onchange="if(this.value) { execCmd('formatBlock', this.value); this.value=''; }" class="bg-gray-700 text-white text-xs rounded px-2 py-1.5 border border-gray-600 outline-none">
+              <option value="">Kiểu chữ...</option>
+              <option value="H2">Tiêu đề lớn (H2)</option>
+              <option value="H3">Tiêu đề mục (H3)</option>
+              <option value="H4">Tiêu đề phụ (H4)</option>
+              <option value="P">Đoạn văn thường (P)</option>
+            </select>
+
+            <!-- Cỡ chữ -->
+            <select onchange="if(this.value) { execCmd('fontSize', this.value); this.value=''; }" class="bg-gray-700 text-white text-xs rounded px-2 py-1.5 border border-gray-600 outline-none">
+              <option value="">Cỡ chữ...</option>
+              <option value="2">Nhỏ (10pt)</option>
+              <option value="3">Thường (13pt)</option>
+              <option value="4">Vừa (14pt)</option>
+              <option value="5">Lớn (18pt)</option>
+              <option value="6">Rất lớn (24pt)</option>
+            </select>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Định dạng cơ bản -->
+            <button type="button" onclick="execCmd('bold')" title="In đậm (Ctrl+B)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs font-bold">B</button>
+            <button type="button" onclick="execCmd('italic')" title="In nghiêng (Ctrl+I)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs italic">I</button>
+            <button type="button" onclick="execCmd('underline')" title="Gạch chân (Ctrl+U)" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs underline">U</button>
+            <button type="button" onclick="execCmd('strikeThrough')" title="Gạch ngang chữ" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs line-through">S</button>
+            <button type="button" onclick="execCmd('removeFormat')" title="Xóa định dạng rác" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-rose-300 rounded text-xs">Tx</button>
+
+            <!-- Màu chữ & Tô sáng -->
+            <label title="Màu chữ" class="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs cursor-pointer text-white">
+              <span>A</span>
+              <input type="color" value="#60a5fa" onchange="execCmd('foreColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
+            </label>
+            <label title="Màu nền chữ (Highlight)" class="flex items-center gap-1 px-2 py-1 bg-gray-700 hover:bg-gray-600 rounded text-xs cursor-pointer text-amber-300">
+              <span>🖍</span>
+              <input type="color" value="#fde047" onchange="execCmd('hiliteColor', this.value)" class="w-4 h-4 bg-transparent border-0 cursor-pointer p-0" />
+            </label>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Căn lề & Danh sách -->
+            <button type="button" onclick="execCmd('justifyLeft')" title="Căn trái" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫷</button>
+            <button type="button" onclick="execCmd('justifyCenter')" title="Căn giữa" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫸</button>
+            <button type="button" onclick="execCmd('justifyRight')" title="Căn phải" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">⫹</button>
+            <button type="button" onclick="execCmd('justifyFull')" title="Căn đều 2 bên" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">☰</button>
+
+            <button type="button" onclick="execCmd('insertUnorderedList')" title="Danh sách dấu chấm" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">• Danh sách</button>
+            <button type="button" onclick="execCmd('insertOrderedList')" title="Danh sách đánh số" class="px-2.5 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">1. Danh sách</button>
+            <button type="button" onclick="execCmd('indent')" title="Thụt lề vào" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">→|</button>
+            <button type="button" onclick="execCmd('outdent')" title="Thụt lề ra" class="px-2 py-1.5 bg-gray-700 hover:bg-gray-600 text-white rounded text-xs">|←</button>
+
+            <span class="w-px h-5 bg-gray-600 mx-0.5"></span>
+
+            <!-- Chèn Bảng & Ảnh -->
+            <button type="button" onclick="openTableModal()" class="px-3 py-1.5 bg-purple-900/50 text-purple-300 hover:bg-purple-800/70 border border-purple-700 rounded text-xs font-semibold transition">+ Chèn Bảng</button>
+            <button type="button" onclick="insertSampleSpecTable()" class="px-3 py-1.5 bg-blue-900/50 text-blue-300 hover:bg-blue-800/70 border border-blue-700 rounded text-xs font-semibold transition">+ Bảng Thông số Mẫu</button>
+            <label class="px-3 py-1.5 bg-emerald-900/50 text-emerald-300 hover:bg-emerald-800/70 border border-emerald-700 rounded text-xs font-semibold cursor-pointer transition">
+              + Chèn Ảnh
+>>>>>>> parent of 6faef98 (upt)
               <input type="file" id="upload-img-input" accept="image/*" class="hidden" onchange="uploadImageToEditor(this)" />
             </label>
           </div>
@@ -649,6 +725,7 @@
     function renderBlockCard(b) {
       const pTags = (b.purposes || []).map(p => `<span class="px-2 py-0.5 rounded bg-gray-800 border border-gray-700 text-[10px] text-slate-300">${p.name}</span>`).join('');
       const mTags = (b.models || []).map(m => `<span class="px-2 py-0.5 rounded bg-blue-900/30 border border-blue-800 text-[10px] text-blue-300 font-semibold">${m.model_name}</span>`).join('');
+<<<<<<< HEAD
       const typeBadge = b.block_type === 'GENERAL_TECH' 
         ? `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">Thuyết minh chung</span>`
         : `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Thuyết minh chi tiết (có key)</span>`;
@@ -656,6 +733,10 @@
         <button onclick="event.stopPropagation(); openEditBlock(${b.id})" class="text-xs text-slate-400 hover:text-blue-400 px-2.5 py-1.5 border border-gray-700 hover:border-blue-800 rounded bg-gray-800 transition">Sửa</button>
         <button onclick="event.stopPropagation(); deleteBlock(${b.id})" class="text-xs text-slate-400 hover:text-red-400 px-2.5 py-1.5 border border-gray-700 hover:border-red-800 rounded bg-gray-800 transition">Xóa</button>
       ` : '';
+=======
+      const typeBadge = b.block_type === 'GENERAL_TECH' ? `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">Thuyết minh chung</span>` : `<span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">Thuyết minh chi tiết (có key)</span>`;
+      const adBtns = currentUser.role === 'ADMIN' ? `<button onclick="event.stopPropagation(); openEditBlock(${b.id})" class="text-xs text-slate-400 hover:text-blue-400 px-2.5 py-1.5 border border-gray-700 hover:border-blue-800 rounded bg-gray-800 transition">Sửa</button><button onclick="event.stopPropagation(); deleteBlock(${b.id})" class="text-xs text-slate-400 hover:text-red-400 px-2.5 py-1.5 border border-gray-700 hover:border-red-800 rounded bg-gray-800 transition">Xóa</button>` : '';
+>>>>>>> parent of 6faef98 (upt)
 
       return `
         <div id="block-card-${b.id}" class="border border-gray-700 rounded-xl px-5 py-4 hover:border-blue-500/50 transition bg-gray-850 cursor-pointer" onclick="toggleBlock(${b.id})">
@@ -809,7 +890,13 @@
       document.getElementById('edit-title').value = b.title; document.getElementById('edit-block-type').value = b.block_type;
       document.getElementById('edit-solution').value = b.solution_id; if(b.vendor_id) document.getElementById('edit-vendor').value = b.vendor_id;
       const pIds = (b.purposes||[]).map(p=>p.id); document.querySelectorAll('.edit-purpose-cb').forEach(c => c.checked = pIds.includes(Number(c.value)));
+<<<<<<< HEAD
       renderEditorModels((b.models||[]).map(m=>m.id)); document.getElementById('rich-editor').innerHTML = b.html_content;
+=======
+      renderEditorModels((b.models||[]).map(m=>m.id));
+      document.getElementById('rich-editor').innerHTML = b.html_content;
+      document.getElementById('html-source-editor').value = b.html_content;
+>>>>>>> parent of 6faef98 (upt)
     }
 
     async function saveContentBlock() {
